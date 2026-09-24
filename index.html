@@ -603,6 +603,58 @@
       background: var(--moss-wash);
     }
 
+    .rec-card {
+      padding: 16px 18px;
+      background: var(--bg-2);
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius-sm);
+      margin-bottom: 10px;
+      animation: pop 0.3s ease;
+    }
+    .rec-card.top {
+      border-color: rgba(232, 165, 152, 0.55);
+      background: var(--blush-wash);
+    }
+    .rec-card h3 {
+      font-family: var(--display);
+      font-size: 1.15rem;
+      color: var(--honey);
+      margin-bottom: 6px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+    .rec-card .why {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 10px;
+      max-width: 62ch;
+    }
+    .rec-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      font-size: 0.78rem;
+      color: var(--faint);
+      margin-bottom: 12px;
+    }
+    .rec-meta strong { color: var(--text); font-weight: 600; }
+    .nba-box {
+      padding: 14px 16px;
+      border-radius: var(--radius-sm);
+      background: var(--honey-wash);
+      border: 1px solid rgba(224, 177, 91, 0.35);
+      margin-bottom: 12px;
+    }
+    .nba-box h3 {
+      font-family: var(--display);
+      font-size: 1.05rem;
+      color: var(--honey);
+      margin-bottom: 6px;
+    }
+    .nba-box p { font-size: 0.85rem; color: var(--muted); }
+
     .empty {
       text-align: center;
       color: var(--faint);
@@ -711,8 +763,8 @@
           </div>
           <div class="guide-step">
             <div class="n">4</div>
-            <strong>Save → try one customer</strong>
-            <span>Save timings, then open “Try one customer” and click +1 day to see which email would send.</span>
+            <strong>Save → recommend or try one</strong>
+            <span>Or skip to Recommend and let the engine rank timing recipes for you.</span>
           </div>
         </div>
         <div class="guide-actions">
@@ -728,9 +780,10 @@
 
     <nav class="tabs" role="tablist">
       <button type="button" class="tab on" data-view="design">1 · Design</button>
-      <button type="button" class="tab" data-view="compare">2 · Compare</button>
-      <button type="button" class="tab" data-view="runtime">3 · Try one customer</button>
-      <button type="button" class="tab" data-view="export">4 · Export rules</button>
+      <button type="button" class="tab" data-view="recommend">2 · Recommend</button>
+      <button type="button" class="tab" data-view="compare">3 · Compare</button>
+      <button type="button" class="tab" data-view="runtime">4 · Try one customer</button>
+      <button type="button" class="tab" data-view="export">5 · Export</button>
     </nav>
 
     <!-- ========== DESIGN ========== -->
@@ -868,6 +921,50 @@
       </section>
     </div>
 
+    <!-- ========== RECOMMEND ========== -->
+    <div class="view" id="view-recommend">
+      <section class="panel">
+        <div class="panel-h">
+          <h2>Recommendations engine</h2>
+          <span class="pill warn">searches timing recipes</span>
+        </div>
+        <div class="panel-b">
+          <p style="color:var(--muted);font-size:0.92rem;max-width:62ch;margin-bottom:16px">
+            Pick what you care about. We’ll try a bunch of timing recipes (scamp defaults,
+            aggressive, patient, no recovery, your current dials, and nearby tweaks),
+            score each on fake shoppers, and rank the top ones — with a plain-English why.
+          </p>
+          <label class="field">
+            <span class="l">Optimise for</span>
+            <select id="recGoal">
+              <option value="balanced">Balanced (purchases + redeem − cost)</option>
+              <option value="second">More 2nd purchases</option>
+              <option value="redeem">More 1st redemptions</option>
+              <option value="efficiency">Best efficiency (redeem % / comms)</option>
+              <option value="retain">More habit / retain (3+ purchases)</option>
+            </select>
+          </label>
+          <div class="btn-row">
+            <button type="button" class="btn btn-primary" id="btnRecommend">Find recommendations</button>
+            <button type="button" class="btn btn-ghost" id="btnRecFromDesign">Use current Design dials as baseline</button>
+          </div>
+          <div class="callout">
+            <strong>Not magic.</strong> Same directional sim as Design — just automated A/B/C…
+            Use it to shortlist, then sanity-check in “Try one customer”.
+          </div>
+        </div>
+      </section>
+      <section class="panel" style="margin-top:16px">
+        <div class="panel-h">
+          <h2>Ranked recipes</h2>
+          <span class="pill" id="recStatus">not run</span>
+        </div>
+        <div class="panel-b" id="recList">
+          <div class="empty">Press “Find recommendations” — takes a few seconds.</div>
+        </div>
+      </section>
+    </div>
+
     <!-- ========== COMPARE ========== -->
     <div class="view" id="view-compare">
       <section class="panel">
@@ -928,7 +1025,13 @@
         </section>
         <section class="panel">
           <div class="panel-h"><h2>Eligible tonight</h2><span class="pill" id="evalBadge">idle</span></div>
-          <div class="panel-b"><div id="fireList"><div class="empty">Advance a day or fire an event.</div></div></div>
+          <div class="panel-b">
+            <div class="nba-box" id="nbaBox">
+              <h3>Next best action</h3>
+              <p id="nbaText">Advance a day or change state — we’ll recommend what to send (or wait).</p>
+            </div>
+            <div id="fireList"><div class="empty">Advance a day or fire an event.</div></div>
+          </div>
         </section>
         <section class="panel" style="grid-column:1/-1">
           <div class="panel-h"><h2>Send &amp; event log</h2><button type="button" class="btn btn-ghost" id="btnClearLog">Clear</button></div>
@@ -1268,6 +1371,163 @@ function simulate(L) {
   };
 }
 
+/* ========== RECOMMENDATIONS ENGINE ========== */
+function scoreMetrics(m, goal) {
+  switch (goal) {
+    case "second": return m.second;
+    case "redeem": return m.redeem;
+    case "efficiency": return m.efficiency;
+    case "retain": return m.retain;
+    case "balanced":
+    default:
+      return 0.35 * m.second + 0.35 * m.redeem + 0.2 * m.retain - 2.5 * m.cost;
+  }
+}
+
+function recipeCatalog(base) {
+  const b = { ...base, n: Math.min(base.n, 400), horizon: Math.min(base.horizon, 60) };
+  const recipes = [
+    { id: "scamp", name: "Scamp defaults", why: "Matches your nurture overview timings (+1, +4/+8, +7, +30).", levers: { ...b, ...SCAMP_DEFAULTS, n: b.n, horizon: b.horizon, seed: b.seed } },
+    { id: "current", name: "Your current dials", why: "Whatever is set on the Design tab right now.", levers: { ...b } },
+    { id: "early", name: "Nudge earlier", why: "Hits the bonus offer sooner — usually lifts 2nd purchase, costs a bit more.", levers: { ...b, tp1: 1, tp2a: 3, tp2b: 6, tp5: 5, tp6: 21, bp: true, recovery: true } },
+    { id: "patient", name: "Give them space", why: "Waits longer before recovery — fewer emails, may lose some converters.", levers: { ...b, tp1: 1, tp2a: 7, tp2b: 14, tp5: 10, tp6: 45, bp: true, recovery: true } },
+    { id: "no_rec", name: "Happy path only", why: "Turns off TP3/TP5/TP6 — less fatigue, fewer second chances.", levers: { ...b, recovery: false, bp: true } },
+    { id: "no_bp", name: "No bonus-point offer", why: "Drops TP2/TP3 — simpler program, often lower 2nd-purchase lift.", levers: { ...b, bp: false, recovery: true } },
+    { id: "redeem_push", name: "Push redemption hard", why: "Faster TP5 after tier celebrate — trades more emails for redeem rate.", levers: { ...b, tp5: 4, tp4: 1, bp: true, recovery: true } },
+    { id: "habit", name: "Habit-focused", why: "Earlier TP6 idle nudge to drive 2nd/3rd purchase.", levers: { ...b, tp6: 21, tp2a: 4, tp2b: 8, recovery: true, bp: true } },
+  ];
+  // Nearby tweaks around current
+  const deltas = [
+    { name: "Current · TP2 +3d later", why: "Same recipe but first bonus nudge three days later.", patch: { tp2a: b.tp2a + 3, tp2b: Math.max(b.tp2b, b.tp2a + 5) } },
+    { name: "Current · TP2 −2d earlier", why: "Same recipe but first bonus nudge two days earlier.", patch: { tp2a: Math.max(2, b.tp2a - 2), tp2b: Math.max(3, b.tp2b - 2) } },
+    { name: "Current · shorter BP window", why: "14→10 day offer — urgency vs completion time.", patch: { bpExpiry: 10, tp3: 4 } },
+    { name: "Current · longer BP window", why: "More time to complete the bonus offer.", patch: { bpExpiry: 21, tp3: 5 } },
+  ];
+  deltas.forEach((d, i) => {
+    recipes.push({
+      id: "near_" + i,
+      name: d.name,
+      why: d.why,
+      levers: { ...b, ...d.patch },
+    });
+  });
+  // ensure tp2b > tp2a
+  recipes.forEach((r) => {
+    if (r.levers.tp2b <= r.levers.tp2a) r.levers.tp2b = r.levers.tp2a + 3;
+  });
+  return recipes;
+}
+
+function explainVsBaseline(rec, baseline) {
+  if (!baseline) return rec.why;
+  const d2 = rec.metrics.second - baseline.metrics.second;
+  const dr = rec.metrics.redeem - baseline.metrics.redeem;
+  const dc = rec.metrics.avgComms - baseline.metrics.avgComms;
+  const bits = [];
+  if (Math.abs(d2) >= 0.4) bits.push(`${d2 >= 0 ? "+" : ""}${d2.toFixed(1)}pp 2nd purchase`);
+  if (Math.abs(dr) >= 0.4) bits.push(`${dr >= 0 ? "+" : ""}${dr.toFixed(1)}pp redeem`);
+  if (Math.abs(dc) >= 0.05) bits.push(`${dc >= 0 ? "+" : ""}${dc.toFixed(2)} comms/member`);
+  const delta = bits.length ? bits.join(" · ") : "similar to baseline";
+  return `${rec.why} Versus your current dials: ${delta}.`;
+}
+
+function runRecommendations(goal) {
+  const base = readLevers();
+  const recipes = recipeCatalog(base);
+  const results = recipes.map((r) => {
+    const sim = simulate(r.levers);
+    return {
+      ...r,
+      metrics: sim.metrics,
+      score: scoreMetrics(sim.metrics, goal),
+      fullLevers: { ...r.levers, n: base.n, horizon: base.horizon },
+    };
+  });
+  results.sort((a, b) => b.score - a.score);
+  const baseline = results.find((r) => r.id === "current") || results[0];
+  return results.map((r) => ({
+    ...r,
+    blurb: explainVsBaseline(r, baseline),
+  }));
+}
+
+function renderRecommendations(list, goal) {
+  const el = $("recList");
+  if (!list.length) {
+    el.innerHTML = '<div class="empty">No recipes scored.</div>';
+    return;
+  }
+  const goalLabel = {
+    balanced: "balanced score",
+    second: "2nd purchase %",
+    redeem: "redeem %",
+    efficiency: "efficiency",
+    retain: "retain %",
+  }[goal] || "score";
+
+  el.innerHTML = list.slice(0, 5).map((r, i) => `
+    <div class="rec-card ${i === 0 ? "top" : ""}">
+      <h3>
+        ${i === 0 ? '<span class="pill warn">top pick</span>' : `<span class="pill">#${i + 1}</span>`}
+        ${r.name}
+      </h3>
+      <p class="why">${r.blurb}</p>
+      <div class="rec-meta">
+        <span><strong>${fmtPct(r.metrics.second)}</strong> 2nd buy</span>
+        <span><strong>${fmtPct(r.metrics.redeem)}</strong> redeem</span>
+        <span><strong>${fmtPct(r.metrics.retain)}</strong> retain</span>
+        <span><strong>${fmtNum(r.metrics.avgComms)}</strong> comms</span>
+        <span><strong>${fmtNum(r.score)}</strong> ${goalLabel}</span>
+        <span>TP2 ${r.fullLevers.tp2a}/${r.fullLevers.tp2b} · TP5+${r.fullLevers.tp5} · TP6+${r.fullLevers.tp6} · BP ${r.fullLevers.bp ? "on" : "off"} · rec ${r.fullLevers.recovery ? "on" : "off"}</span>
+      </div>
+      <div class="btn-row" style="margin:0">
+        <button type="button" class="btn btn-honey btn-apply-rec" data-idx="${i}">Load into Design</button>
+        <button type="button" class="btn btn-primary btn-lock-rec" data-idx="${i}">Save as program</button>
+      </div>
+    </div>
+  `).join("");
+
+  window.__recResults = list.slice(0, 5);
+  el.querySelectorAll(".btn-apply-rec").forEach((btn) => {
+    btn.onclick = () => {
+      const r = window.__recResults[+btn.dataset.idx];
+      writeLevers(r.fullLevers);
+      goTab("design");
+      toast("Loaded into Design — hit Run simulation to confirm on full cohort.");
+    };
+  });
+  el.querySelectorAll(".btn-lock-rec").forEach((btn) => {
+    btn.onclick = () => {
+      const r = window.__recResults[+btn.dataset.idx];
+      lockProgram(r.fullLevers, "recommend");
+    };
+  });
+}
+
+function nextBestActionCopy(matched, winner, s) {
+  if (!matched.length) {
+    if (s.purchases >= 3 && s.redeemed) {
+      return { title: "Hold — they’re in habit land", body: "3+ purchases and already redeemed. No nurture TP needed tonight; lifecycle retain owns this." };
+    }
+    if (s.tier && s.redeemed) {
+      return { title: "Wait for the next signal", body: "Reward already redeemed. Next lever is another purchase (or TP6 if they go idle)." };
+    }
+    return { title: "Wait", body: "Nothing matches today. Advance the clock or wait for purchase / tier / redeem." };
+  }
+  const reasons = {
+    TP1: "They just earned first points — celebrate before they forget.",
+    TP2: "Still on one purchase and not tiered — a bonus offer is the best lever for a 2nd buy.",
+    TP3: "BP offer is about to expire — a reminder beats silence if they were close.",
+    TP4: "First-time tier is a milestone — celebrate and point them at redemption.",
+    TP5: "Tiered but haven’t redeemed — a nudge usually beats another purchase push.",
+    TP6: "Gone quiet after 1–2 purchases — idle habit builder is the recovery play.",
+  };
+  const others = matched.filter((r) => r.id !== winner.id).map((r) => r.id);
+  let body = reasons[winner.id] || winner.then;
+  if (others.length) body += ` Suppressed for tonight: ${others.join(", ")} (lower priority).`;
+  return { title: `Send ${winner.id} — ${winner.name}`, body };
+}
+
 /* ========== STATE ========== */
 let lockedLevers = { ...SCAMP_DEFAULTS };
 let lockedRules = compileRules(lockedLevers);
@@ -1434,6 +1694,10 @@ function evaluateRuntime(autoSend) {
     $("evalBadge").textContent = matched.length + " candidate(s)";
   }
 
+  const nba = nextBestActionCopy(matched, winner, member);
+  $("nbaBox").querySelector("h3").textContent = nba.title;
+  $("nbaText").textContent = nba.body;
+
   if (autoSend && winner) {
     member.sent.add(winner.id);
     if (winner.id === "TP2") {
@@ -1506,6 +1770,22 @@ $("btnGuideRuntime").onclick = () => {
   lockProgram(readLevers(), "guide");
   goTab("runtime");
   toast("Click “+1 day” a few times — watch which email lights up.");
+};
+
+$("btnRecommend").onclick = () => {
+  const goal = $("recGoal").value;
+  $("recStatus").textContent = "searching…";
+  $("recList").innerHTML = '<div class="empty">Trying ~12 timing recipes…</div>';
+  setTimeout(() => {
+    const list = runRecommendations(goal);
+    renderRecommendations(list, goal);
+    $("recStatus").textContent = `top ${Math.min(5, list.length)} · goal: ${goal}`;
+    toast("Recommendations ready — top pick is highlighted.");
+  }, 40);
+};
+
+$("btnRecFromDesign").onclick = () => {
+  toast("Baseline is whatever is on Design — hit Find recommendations.");
 };
 
 $("btnCompare").onclick = () => {
