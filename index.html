@@ -1095,7 +1095,6 @@ const PROGRAM_DEFAULTS = {
   horizon: 60,
   seed: 42,
 };
-const SCAMP_DEFAULTS = PROGRAM_DEFAULTS; // alias for any leftover refs
 
 const MSG = {
   TP1: { name: "First points celebration", path: "Core" },
@@ -1886,12 +1885,12 @@ $("btnLock").onclick = () => {
 
 $("btnSnapA").onclick = () => {
   snapA = readLevers();
-  $("colA").innerHTML = `<h3>Variant A</h3><p class="empty">Ready — run compare.</p>`;
+  $("colA").innerHTML = `<h3>Option A</h3><p class="empty">Ready — compare when B is saved.</p>`;
   toast("Saved as A");
 };
 $("btnSnapB").onclick = () => {
   snapB = readLevers();
-  $("colB").innerHTML = `<h3>Variant B</h3><p class="empty">Ready — run compare.</p>`;
+  $("colB").innerHTML = `<h3>Option B</h3><p class="empty">Ready — run compare.</p>`;
   toast("Saved as B");
 };
 $("btnUseA").onclick = () => snapA && lockProgram(snapA, "compare A");
