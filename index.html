@@ -107,6 +107,81 @@
       margin-bottom: 2px;
     }
 
+    /* —— Guide —— */
+    .guide {
+      background: var(--panel);
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      margin-bottom: 22px;
+      animation: rise 0.45s ease;
+    }
+    .guide h2 {
+      font-family: var(--display);
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--honey);
+      margin-bottom: 8px;
+    }
+    .guide > p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 62ch;
+      margin-bottom: 16px;
+    }
+    .guide-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .guide-step {
+      padding: 14px;
+      background: var(--bg-2);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line-soft);
+      min-width: 0;
+    }
+    .guide-step .n {
+      font-family: var(--display);
+      font-size: 1.1rem;
+      color: var(--blush);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .guide-step strong {
+      display: block;
+      font-size: 0.88rem;
+      margin-bottom: 4px;
+    }
+    .guide-step span {
+      font-size: 0.78rem;
+      color: var(--faint);
+      line-height: 1.4;
+    }
+    .guide-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .guide.collapsed .guide-body { display: none; }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--blush);
+      color: #2a1512;
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 12px 20px;
+      border-radius: 999px;
+      z-index: 50;
+      animation: pop 0.25s ease;
+      box-shadow: none;
+    }
+
     /* —— Tabs —— */
     .tabs {
       display: flex;
@@ -577,12 +652,13 @@
 
     @media (max-width: 900px) {
       .grid-2, .stats, .grid-3 { grid-template-columns: 1fr 1fr; }
+      .guide-steps { grid-template-columns: 1fr 1fr; }
     }
 
     @media (max-width: 640px) {
       .shell { padding: 20px 14px 56px; }
       .brand-meta { text-align: left; width: 100%; }
-      .grid-2, .stats, .grid-3 { grid-template-columns: 1fr; }
+      .grid-2, .stats, .grid-3, .guide-steps { grid-template-columns: 1fr; }
       .stats { grid-template-columns: 1fr 1fr; }
       .day-bar .btn { flex: 1 1 100%; width: 100%; }
       .log li { grid-template-columns: 1fr; gap: 2px; }
@@ -599,26 +675,69 @@
     <header class="brand">
       <div>
         <h1>Loyalty <em>Studio</em></h1>
-        <p class="tag">Simulate outcomes. Lock the rules. Ship the program — not a journey map.</p>
+        <p class="tag">A sandbox to try nurture timings before you build them in your ESP.</p>
       </div>
       <div class="brand-meta">
-        <strong>Scrappy design lab</strong>
-        Directional · assumption-led · exportable
+        <strong>What is this?</strong>
+        Fake customers · real rule logic · rough outcomes
       </div>
     </header>
 
+    <section class="guide" id="guide">
+      <div class="guide-body">
+        <h2>Start here (90 seconds)</h2>
+        <p>
+          Your scamps showed emails in a line (1st purchase → bonus → redeem…).
+          This tool treats that as <strong>rules on customer state</strong> instead:
+          “if they’ve bought once and it’s been 4 days, send the bonus offer.”
+          You twist the dials, we pretend 800 shoppers go through the program, and you see
+          roughly who buys again / hits tier / redeems — then you lock those timings as the program.
+        </p>
+        <div class="guide-steps">
+          <div class="guide-step">
+            <div class="n">1</div>
+            <strong>Leave the dials</strong>
+            <span>Defaults match your scamp (+1 day, +4/+8, +7, +30). Don’t overthink yet.</span>
+          </div>
+          <div class="guide-step">
+            <div class="n">2</div>
+            <strong>Hit “Run simulation”</strong>
+            <span>Watch the scoreboard fill in. Those %s are directional guesses, not truth.</span>
+          </div>
+          <div class="guide-step">
+            <div class="n">3</div>
+            <strong>Change one dial</strong>
+            <span>e.g. move TP2 from 4 → 10 days. Run again. Did 2nd purchase go up or down?</span>
+          </div>
+          <div class="guide-step">
+            <div class="n">4</div>
+            <strong>Save → try one customer</strong>
+            <span>Save timings, then open “Try one customer” and click +1 day to see which email would send.</span>
+          </div>
+        </div>
+        <div class="guide-actions">
+          <button type="button" class="btn btn-primary" id="btnGuideRun">Run with scamp defaults</button>
+          <button type="button" class="btn btn-honey" id="btnGuideRuntime">Show me one customer</button>
+          <button type="button" class="btn btn-ghost" id="btnGuideHide">Got it — hide</button>
+        </div>
+      </div>
+    </section>
+    <p style="margin:-12px 0 18px; font-size:0.8rem;">
+      <button type="button" class="btn btn-ghost" id="btnGuideShow" style="display:none; min-height:auto; padding:4px 10px;">Show “how to use” again</button>
+    </p>
+
     <nav class="tabs" role="tablist">
-      <button type="button" class="tab on" data-view="design">Design</button>
-      <button type="button" class="tab" data-view="compare">Compare</button>
-      <button type="button" class="tab" data-view="runtime">Runtime</button>
-      <button type="button" class="tab" data-view="export">Export</button>
+      <button type="button" class="tab on" data-view="design">1 · Design</button>
+      <button type="button" class="tab" data-view="compare">2 · Compare</button>
+      <button type="button" class="tab" data-view="runtime">3 · Try one customer</button>
+      <button type="button" class="tab" data-view="export">4 · Export rules</button>
     </nav>
 
     <!-- ========== DESIGN ========== -->
     <div class="view on" id="view-design">
       <div class="grid-2">
         <section class="panel">
-          <div class="panel-h"><h2>Levers</h2><span class="pill warn">from scamps</span></div>
+          <div class="panel-h"><h2>When should each email fire?</h2><span class="pill warn">from your scamps</span></div>
           <div class="panel-b">
             <label class="field">
               <span class="l">TP1 delay (days after 1st purchase)</span>
@@ -681,7 +800,7 @@
         </section>
 
         <section class="panel">
-          <div class="panel-h"><h2>Cohort &amp; assumptions</h2></div>
+          <div class="panel-h"><h2>Test setup</h2></div>
           <div class="panel-b">
             <label class="field">
               <span class="l">Members to simulate</span>
@@ -717,21 +836,22 @@
 
             <div class="btn-row">
               <button type="button" class="btn btn-primary" id="btnRun">Run simulation</button>
-              <button type="button" class="btn btn-honey" id="btnLock">Lock as program</button>
+              <button type="button" class="btn btn-honey" id="btnLock">Save these timings as the program</button>
               <button type="button" class="btn btn-ghost" id="btnResetLevers">Reset to scamp defaults</button>
             </div>
             <div class="callout">
-              <strong>How to use:</strong> tweak levers → run → read outcomes → lock.
-              Locked rules drive Runtime and Export.
+              <strong>Plain English:</strong> left side = when emails go out.
+              Right side = how many fake shoppers to test on.
+              Outcomes below = rough scoreboard after the test.
             </div>
           </div>
         </section>
       </div>
 
       <section class="panel" style="margin-top: 16px;">
-        <div class="panel-h">
-          <h2>Outcomes</h2>
-          <span class="pill" id="simStatus">not run</span>
+          <div class="panel-h">
+          <h2>Scoreboard (after you run)</h2>
+          <span class="pill" id="simStatus">not run yet — press Run simulation</span>
         </div>
         <div class="panel-b">
           <div class="stats" id="outcomeStats">
@@ -1214,15 +1334,34 @@ function metricsBlock(m, L) {
     </div>`;
 }
 
+function toast(msg) {
+  const old = document.querySelector(".toast");
+  if (old) old.remove();
+  const t = document.createElement("div");
+  t.className = "toast";
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2800);
+}
+
 function lockProgram(L, label) {
   lockedLevers = { ...L };
   lockedRules = compileRules(lockedLevers);
   writeLevers(lockedLevers);
   renderExport();
-  $("lockedPill").textContent = "locked · " + (label || "design");
+  $("lockedPill").textContent = "using your saved timings";
   member = freshMember();
   evaluateRuntime(false);
-  alert("Program locked. Runtime + Export now use these rules.");
+  toast("Saved. Open “Try one customer” to walk a shopper day by day.");
+}
+
+function goTab(name) {
+  document.querySelectorAll(".tab").forEach((t) => {
+    t.classList.toggle("on", t.dataset.view === name);
+  });
+  document.querySelectorAll(".view").forEach((v) => v.classList.remove("on"));
+  $("view-" + name).classList.add("on");
+  if (name === "export") renderExport();
 }
 
 function renderExport() {
@@ -1338,48 +1477,40 @@ function advance(n) {
 
 /* ========== WIRE ========== */
 document.querySelectorAll(".tab").forEach((tab) => {
-  tab.onclick = () => {
-    document.querySelectorAll(".tab").forEach((t) => t.classList.remove("on"));
-    document.querySelectorAll(".view").forEach((v) => v.classList.remove("on"));
-    tab.classList.add("on");
-    $("view-" + tab.dataset.view).classList.add("on");
-    if (tab.dataset.view === "export") renderExport();
-  };
+  tab.onclick = () => goTab(tab.dataset.view);
 });
 
-["tp1","tp2a","tp2b","bpExpiry","tp3","tp5","tp6","n","horizon"].forEach((k) => {
-  $("lev_" + k).addEventListener("input", syncOutputs);
-});
+$("btnGuideHide").onclick = () => {
+  $("guide").classList.add("collapsed");
+  $("btnGuideShow").style.display = "inline-block";
+  try { localStorage.setItem("ls_guide_hidden", "1"); } catch (_) {}
+};
+$("btnGuideShow").onclick = () => {
+  $("guide").classList.remove("collapsed");
+  $("btnGuideShow").style.display = "none";
+  try { localStorage.removeItem("ls_guide_hidden"); } catch (_) {}
+};
+if (localStorage.getItem("ls_guide_hidden") === "1") {
+  $("guide").classList.add("collapsed");
+  $("btnGuideShow").style.display = "inline-block";
+}
 
-$("btnResetLevers").onclick = () => writeLevers(SCAMP_DEFAULTS);
-
-$("btnRun").onclick = () => {
-  const L = readLevers();
-  $("simStatus").textContent = "running…";
-  // yield so UI updates
-  setTimeout(() => {
-    lastSim = simulate(L);
-    renderOutcomes(lastSim.metrics);
-    $("simStatus").textContent = `n=${L.n} · seed ${L.seed} · ${L.horizon}d`;
-  }, 30);
+$("btnGuideRun").onclick = () => {
+  writeLevers(SCAMP_DEFAULTS);
+  goTab("design");
+  $("btnRun").click();
+  toast("Sim ran on scamp defaults — check the scoreboard below.");
 };
 
-$("btnLock").onclick = () => {
-  const L = readLevers();
-  lockProgram(L, "design");
+$("btnGuideRuntime").onclick = () => {
+  lockProgram(readLevers(), "guide");
+  goTab("runtime");
+  toast("Click “+1 day” a few times — watch which email lights up.");
 };
 
-$("btnSnapA").onclick = () => {
-  snapA = readLevers();
-  $("colA").innerHTML = `<h3>Variant A</h3><p class="empty">Ready — run compare.</p>`;
-};
-$("btnSnapB").onclick = () => {
-  snapB = readLevers();
-  $("colB").innerHTML = `<h3>Variant B</h3><p class="empty">Ready — run compare.</p>`;
-};
 $("btnCompare").onclick = () => {
   if (!snapA || !snapB) {
-    alert("Snapshot both A and B from Design first.");
+    toast("First: snapshot A, change a dial, snapshot B.");
     return;
   }
   const ra = simulate(snapA);
@@ -1392,6 +1523,38 @@ $("btnCompare").onclick = () => {
   $("colB").innerHTML = `<h3>Variant B ${!aBetter ? "· lean here" : ""}</h3>` + metricsBlock(rb.metrics, snapB);
   $("btnUseA").disabled = false;
   $("btnUseB").disabled = false;
+};
+
+["tp1","tp2a","tp2b","bpExpiry","tp3","tp5","tp6","n","horizon"].forEach((k) => {
+  $("lev_" + k).addEventListener("input", syncOutputs);
+});
+
+$("btnResetLevers").onclick = () => writeLevers(SCAMP_DEFAULTS);
+
+$("btnRun").onclick = () => {
+  const L = readLevers();
+  $("simStatus").textContent = "running…";
+  setTimeout(() => {
+    lastSim = simulate(L);
+    renderOutcomes(lastSim.metrics);
+    $("simStatus").textContent = `done · ${L.n} shoppers · ${L.horizon} days`;
+  }, 30);
+};
+
+$("btnLock").onclick = () => {
+  const L = readLevers();
+  lockProgram(L, "design");
+};
+
+$("btnSnapA").onclick = () => {
+  snapA = readLevers();
+  $("colA").innerHTML = `<h3>Variant A</h3><p class="empty">Ready — run compare.</p>`;
+  toast("Saved as A");
+};
+$("btnSnapB").onclick = () => {
+  snapB = readLevers();
+  $("colB").innerHTML = `<h3>Variant B</h3><p class="empty">Ready — run compare.</p>`;
+  toast("Saved as B");
 };
 $("btnUseA").onclick = () => snapA && lockProgram(snapA, "compare A");
 $("btnUseB").onclick = () => snapB && lockProgram(snapB, "compare B");
