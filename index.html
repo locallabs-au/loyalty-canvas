@@ -33,12 +33,18 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html {
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
     body {
       font-family: var(--font);
       background: var(--ink);
       color: var(--text);
       min-height: 100vh;
       line-height: 1.45;
+      overflow-x: hidden;
       background-image:
         radial-gradient(ellipse 80% 50% at 10% -10%, rgba(212, 168, 75, 0.07), transparent 50%),
         radial-gradient(ellipse 60% 40% at 100% 0%, rgba(122, 158, 120, 0.06), transparent 45%),
@@ -55,6 +61,7 @@
       max-width: 1180px;
       margin: 0 auto;
       padding: 28px 20px 64px;
+      width: 100%;
     }
 
     header.hero {
@@ -106,12 +113,15 @@
       font-size: 0.8rem;
       font-weight: 500;
       padding: 8px 14px;
+      min-height: 40px;
       border-radius: 6px;
       border: 1px solid var(--line);
       background: var(--panel-2);
       color: var(--text);
       cursor: pointer;
       transition: background 0.15s, border-color 0.15s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
 
     .btn:hover:not(:disabled) {
@@ -152,10 +162,6 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 16px;
-    }
-
-    @media (max-width: 900px) {
-      .layout { grid-template-columns: 1fr; }
     }
 
     .panel {
@@ -239,11 +245,14 @@
       justify-content: space-between;
       gap: 12px;
       padding: 10px 12px;
+      min-height: 44px;
       background: var(--ink-2);
       border: 1px solid var(--line-soft);
       border-radius: 8px;
       cursor: pointer;
       user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
 
     .toggle span { font-size: 0.85rem; }
@@ -365,7 +374,7 @@
 
     .log li {
       display: grid;
-      grid-template-columns: 64px 72px 1fr;
+      grid-template-columns: 52px 64px minmax(0, 1fr);
       gap: 10px;
       padding: 10px 4px;
       border-bottom: 1px solid var(--line-soft);
@@ -377,12 +386,25 @@
 
     .log .d { color: var(--gold); font-weight: 600; font-variant-numeric: tabular-nums; }
     .log .id { color: var(--sage); font-weight: 600; }
-    .log .msg { color: var(--muted); }
+    .log .msg {
+      color: var(--muted);
+      min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
     .log .event .id { color: var(--sky); }
     .log .suppress .id { color: var(--clay); }
 
+    .table-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 0 -4px;
+      padding: 0 4px;
+    }
+
     .rules-table {
       width: 100%;
+      min-width: 640px;
       border-collapse: collapse;
       font-size: 0.78rem;
     }
@@ -446,13 +468,19 @@
       margin-bottom: 16px;
       border-bottom: 1px solid var(--line);
       animation: rise 0.5s ease-out;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
     }
+
+    .tabs::-webkit-scrollbar { display: none; }
 
     .tab {
       font-family: var(--font);
       font-size: 0.82rem;
       font-weight: 500;
       padding: 10px 16px;
+      min-height: 44px;
       background: none;
       border: none;
       border-bottom: 2px solid transparent;
@@ -460,6 +488,10 @@
       cursor: pointer;
       margin-bottom: -1px;
       transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
 
     .tab:hover { color: var(--muted); }
@@ -488,6 +520,139 @@
     @keyframes pop {
       from { opacity: 0; transform: translateY(4px) scale(0.98); }
       to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* —— Mobile / narrow viewports —— */
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .full { grid-column: 1; }
+    }
+
+    @media (max-width: 640px) {
+      .shell {
+        padding: 16px 14px 48px;
+      }
+
+      header.hero {
+        margin-bottom: 18px;
+      }
+
+      header.hero h1 {
+        font-size: 1.55rem;
+      }
+
+      header.hero p {
+        font-size: 0.88rem;
+      }
+
+      .day-bar {
+        padding: 12px 12px;
+        gap: 10px;
+      }
+
+      .day-bar .clock {
+        width: 100%;
+        font-size: 1.2rem;
+      }
+
+      .day-bar .btn {
+        flex: 1 1 calc(50% - 6px);
+        min-width: 0;
+        text-align: center;
+      }
+
+      .day-bar .btn-ghost {
+        flex: 1 1 100%;
+      }
+
+      .dims {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .dim {
+        padding: 10px;
+      }
+
+      .dim .val {
+        font-size: 1.2rem;
+      }
+
+      .dim label {
+        font-size: 0.62rem;
+        letter-spacing: 0.04em;
+      }
+
+      .events .btn {
+        flex: 1 1 calc(50% - 4px);
+        min-width: 0;
+        text-align: center;
+        font-size: 0.75rem;
+        padding: 10px 8px;
+      }
+
+      .panel-b { padding: 12px; }
+
+      .log li {
+        grid-template-columns: 40px 52px minmax(0, 1fr);
+        gap: 8px;
+        font-size: 0.78rem;
+      }
+
+      .lc {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+
+      .lc .name {
+        grid-column: 1;
+      }
+
+      .lc .why {
+        grid-column: 1;
+        margin-top: 2px;
+      }
+
+      .tabs {
+        margin-left: -14px;
+        margin-right: -14px;
+        padding: 0 14px;
+      }
+
+      .tab {
+        padding: 10px 12px;
+        font-size: 0.78rem;
+      }
+
+      .note {
+        font-size: 0.76rem;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .dims {
+        grid-template-columns: 1fr;
+      }
+
+      .day-bar .btn,
+      .events .btn {
+        flex: 1 1 100%;
+      }
+
+      .log li {
+        grid-template-columns: 1fr;
+        gap: 2px;
+      }
+
+      .log .d,
+      .log .id {
+        display: inline;
+      }
+
+      .log .id::before {
+        content: " · ";
+        color: var(--faint);
+      }
     }
   </style>
 </head>
@@ -595,7 +760,8 @@
     <div class="view" id="view-rules">
       <section class="panel">
         <div class="panel-h"><h2>WHEN → THEN (TP as rules)</h2></div>
-        <div class="panel-b" style="overflow-x: auto;">
+        <div class="panel-b">
+          <div class="table-scroll">
           <table class="rules-table" id="rulesTable">
             <thead>
               <tr>
@@ -609,6 +775,7 @@
             </thead>
             <tbody id="rulesBody"></tbody>
           </table>
+          </div>
         </div>
       </section>
     </div>
