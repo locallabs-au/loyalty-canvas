@@ -655,6 +655,119 @@
     }
     .nba-box p { font-size: 0.85rem; color: var(--muted); }
 
+    .persona-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .persona {
+      text-align: left;
+      padding: 14px;
+      background: var(--bg-2);
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: var(--font);
+      color: var(--text);
+      transition: border-color 0.15s, background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .persona:hover { border-color: var(--line); }
+    .persona.on {
+      border-color: rgba(232, 165, 152, 0.55);
+      background: var(--blush-wash);
+    }
+    .persona .who {
+      font-family: var(--display);
+      font-size: 1.15rem;
+      color: var(--honey);
+      margin-bottom: 4px;
+    }
+    .persona .blurb {
+      font-size: 0.78rem;
+      color: var(--faint);
+      line-height: 1.4;
+    }
+
+    .timeline {
+      list-style: none;
+      position: relative;
+      padding-left: 18px;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background: var(--line-soft);
+    }
+    .timeline li {
+      position: relative;
+      padding: 0 0 14px 12px;
+      animation: pop 0.25s ease;
+    }
+    .timeline li::before {
+      content: "";
+      position: absolute;
+      left: -16px;
+      top: 6px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--line);
+      border: 2px solid var(--panel);
+    }
+    .timeline li.msg::before { background: var(--blush); }
+    .timeline li.visit::before { background: var(--moss); }
+    .timeline li.note::before { background: var(--honey); }
+    .timeline .when {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--faint);
+      margin-bottom: 2px;
+    }
+    .timeline .what {
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+    .timeline .detail {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .story-summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .story-summary strong { color: var(--honey); }
+
+    .adv-toggle {
+      font-family: var(--font);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--faint);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px 0;
+      margin-top: 8px;
+    }
+    .adv-toggle:hover { color: var(--muted); }
+    .advanced { display: none; margin-top: 12px; }
+    .advanced.on { display: block; }
+
     .empty {
       text-align: center;
       color: var(--faint);
@@ -704,13 +817,13 @@
 
     @media (max-width: 900px) {
       .grid-2, .stats, .grid-3 { grid-template-columns: 1fr 1fr; }
-      .guide-steps { grid-template-columns: 1fr 1fr; }
+      .guide-steps, .persona-row { grid-template-columns: 1fr 1fr; }
     }
 
     @media (max-width: 640px) {
       .shell { padding: 20px 14px 56px; }
       .brand-meta { text-align: left; width: 100%; }
-      .grid-2, .stats, .grid-3, .guide-steps { grid-template-columns: 1fr; }
+      .grid-2, .stats, .grid-3, .guide-steps, .persona-row { grid-template-columns: 1fr; }
       .stats { grid-template-columns: 1fr 1fr; }
       .day-bar .btn { flex: 1 1 100%; width: 100%; }
       .log li { grid-template-columns: 1fr; gap: 2px; }
@@ -763,8 +876,8 @@
           </div>
           <div class="guide-step">
             <div class="n">4</div>
-            <strong>Preview one person</strong>
-            <span>Save a setup, then step day by day to see which message would go out and why.</span>
+            <strong>Meet someone</strong>
+            <span>Pick Sam, Alex, or Jordan and play their next two weeks — see what the program feels like.</span>
           </div>
         </div>
         <div class="guide-actions">
@@ -782,7 +895,7 @@
       <button type="button" class="tab on" data-view="design">1 · Design</button>
       <button type="button" class="tab" data-view="recommend">2 · Recommend</button>
       <button type="button" class="tab" data-view="compare">3 · Compare</button>
-      <button type="button" class="tab" data-view="runtime">4 · Preview one person</button>
+      <button type="button" class="tab" data-view="runtime">4 · Meet someone</button>
       <button type="button" class="tab" data-view="export">5 · Export</button>
     </nav>
 
@@ -1002,49 +1115,105 @@
       </section>
     </div>
 
-    <!-- ========== RUNTIME ========== -->
+    <!-- ========== MEET SOMEONE ========== -->
     <div class="view" id="view-runtime">
-      <div class="day-bar">
-        <div class="clock">Day <span id="dayLabel">0</span></div>
-        <button type="button" class="btn btn-primary" id="btnAdvance">+1 day</button>
-        <button type="button" class="btn" id="btnAdvance7">+7 days</button>
-        <button type="button" class="btn btn-ghost" id="btnResetMember">Reset person</button>
-      </div>
-      <div class="grid-2">
+      <section class="panel">
+        <div class="panel-h">
+          <h2>Whose story?</h2>
+          <span class="pill on" id="lockedPill">using saved program</span>
+        </div>
+        <div class="panel-b">
+          <p style="color:var(--muted);font-size:0.9rem;max-width:58ch;margin-bottom:14px">
+            This isn’t the place to pick a winning program — that’s Recommend.
+            This is where you <strong>feel</strong> what a customer actually gets:
+            which messages, how often, and in what order.
+          </p>
+          <div class="persona-row" id="personaRow">
+            <button type="button" class="persona on" data-persona="sam">
+              <div class="who">Sam</div>
+              <div class="blurb">Bought once, never came back. Will we win a second visit — or just fill the inbox?</div>
+            </button>
+            <button type="button" class="persona" data-persona="alex">
+              <div class="who">Alex</div>
+              <div class="blurb">Returns, hits a tier, never uses the reward. Do we nag usefully or annoy?</div>
+            </button>
+            <button type="button" class="persona" data-persona="jordan">
+              <div class="who">Jordan</div>
+              <div class="blurb">Regular already — buys, tiers, redeems. Should we stay mostly quiet?</div>
+            </button>
+          </div>
+          <label class="field">
+            <span class="l">Compare against</span>
+            <select id="storyCompare">
+              <option value="none">Active program only</option>
+              <option value="quiet">Active vs “Protect the inbox”</option>
+              <option value="intent">Active vs “Catch high intent”</option>
+              <option value="b">Active vs Compare option B (if saved)</option>
+            </select>
+          </label>
+          <div class="btn-row">
+            <button type="button" class="btn btn-primary" id="btnPlayStory">Play next 2 weeks</button>
+            <button type="button" class="btn btn-ghost" id="btnReplayStory">Replay</button>
+          </div>
+          <div class="nba-box" id="storyOutcome" style="margin-top:14px">
+            <h3 id="storyOutcomeTitle">Pick someone &amp; press play</h3>
+            <p id="storyOutcomeBody">You’ll get a simple timeline of visits and messages in everyday language.</p>
+          </div>
+        </div>
+      </section>
+
+      <div class="grid-2" style="margin-top:16px" id="storyGrid">
         <section class="panel">
-          <div class="panel-h"><h2>This person</h2><span class="pill on" id="lockedPill">using saved program</span></div>
+          <div class="panel-h"><h2 id="storyHeadA">Active program</h2><span class="pill" id="storyCountA">—</span></div>
           <div class="panel-b">
-            <div class="dims">
-              <div class="dim" id="dimPurchases"><label>Visits / purchases</label><div class="val" id="valPurchases">0</div><div class="hint">count</div></div>
-              <div class="dim" id="dimDays"><label>Days since last signal</label><div class="val" id="valDays">—</div><div class="hint" id="hintDays">no clock yet</div></div>
-              <div class="dim" id="dimTier"><label>Tier unlocked</label><div class="val" id="valTier">No</div><div class="hint">yes / no</div></div>
-              <div class="dim" id="dimRedeemed"><label>Used a reward</label><div class="val" id="valRedeemed">No</div><div class="hint">yes / no</div></div>
+            <div class="story-summary" id="storySumA"></div>
+            <ul class="timeline" id="storyTimeA"><li class="note"><div class="when">Waiting</div><div class="what">Press play to see the story</div></li></ul>
+          </div>
+        </section>
+        <section class="panel" id="storyPanelB" style="display:none">
+          <div class="panel-h"><h2 id="storyHeadB">Comparison</h2><span class="pill" id="storyCountB">—</span></div>
+          <div class="panel-b">
+            <div class="story-summary" id="storySumB"></div>
+            <ul class="timeline" id="storyTimeB"></ul>
+          </div>
+        </section>
+      </div>
+
+      <section class="panel" style="margin-top:16px">
+        <div class="panel-b" style="padding-top:10px;padding-bottom:10px">
+          <button type="button" class="adv-toggle" id="btnAdvanced">Show advanced controls (manual day stepping)</button>
+          <div class="advanced" id="advancedBox">
+            <div class="day-bar" style="margin:0 0 12px">
+              <div class="clock">Day <span id="dayLabel">0</span></div>
+              <button type="button" class="btn btn-primary" id="btnAdvance">+1 day</button>
+              <button type="button" class="btn" id="btnAdvance7">+7 days</button>
+              <button type="button" class="btn btn-ghost" id="btnResetMember">Reset</button>
             </div>
-            <div class="toggle" id="togBp"><span>Bonus offer is active</span><div class="switch"></div></div>
-            <div class="toggle" id="togBpDone"><span>Bonus offer completed</span><div class="switch"></div></div>
-            <div class="btn-row" style="margin-top:14px">
+            <div class="dims" style="margin-bottom:10px">
+              <div class="dim" id="dimPurchases"><label>Visits</label><div class="val" id="valPurchases">0</div></div>
+              <div class="dim" id="dimDays"><label>Days since signal</label><div class="val" id="valDays">—</div><div class="hint" id="hintDays"></div></div>
+              <div class="dim" id="dimTier"><label>Tier</label><div class="val" id="valTier">No</div></div>
+              <div class="dim" id="dimRedeemed"><label>Reward used</label><div class="val" id="valRedeemed">No</div></div>
+            </div>
+            <div class="toggle" id="togBp"><span>Bonus offer active</span><div class="switch"></div></div>
+            <div class="toggle" id="togBpDone"><span>Bonus completed</span><div class="switch"></div></div>
+            <div class="btn-row">
               <button type="button" class="btn btn-honey" id="btnPurchase">They purchased</button>
               <button type="button" class="btn" id="btnTier">They hit a tier</button>
               <button type="button" class="btn" id="btnRedeem">They used a reward</button>
               <button type="button" class="btn" id="btnActivateBp">Start bonus offer</button>
             </div>
-          </div>
-        </section>
-        <section class="panel">
-          <div class="panel-h"><h2>What should we send?</h2><span class="pill" id="evalBadge">idle</span></div>
-          <div class="panel-b">
-            <div class="nba-box" id="nbaBox">
+            <div class="nba-box" id="nbaBox" style="margin-top:12px">
               <h3>Suggested next step</h3>
-              <p id="nbaText">Step forward a day or change their situation — we’ll suggest what to send, or to wait.</p>
+              <p id="nbaText">For manual stepping only.</p>
             </div>
-            <div id="fireList"><div class="empty">Nothing queued yet.</div></div>
+            <div id="fireList" style="margin-top:8px"></div>
+            <ul class="log" id="log" style="margin-top:12px"></ul>
+            <span class="pill" id="evalBadge" style="display:none">idle</span>
+            <button type="button" class="btn btn-ghost" id="btnClearLog" style="margin-top:8px">Clear log</button>
           </div>
-        </section>
-        <section class="panel" style="grid-column:1/-1">
-          <div class="panel-h"><h2>Activity log</h2><button type="button" class="btn btn-ghost" id="btnClearLog">Clear</button></div>
-          <div class="panel-b"><ul class="log" id="log"></ul></div>
-        </section>
-      </div>
+        </div>
+      </section>
     </div>
 
     <!-- ========== EXPORT ========== -->
@@ -1667,7 +1836,7 @@ function lockProgram(L, label) {
   $("lockedPill").textContent = "using your saved timings";
   member = freshMember();
   evaluateRuntime(false);
-  toast("Saved. Open “Preview one person” to walk through day by day.");
+  toast("Saved. Open “Meet someone” to see what Sam / Alex / Jordan would get.");
 }
 
 function goTab(name) {
@@ -1677,6 +1846,7 @@ function goTab(name) {
   document.querySelectorAll(".view").forEach((v) => v.classList.remove("on"));
   $("view-" + name).classList.add("on");
   if (name === "export") renderExport();
+  if (name === "runtime") $("lockedPill").textContent = "using saved program";
 }
 
 function renderExport() {
@@ -1704,7 +1874,280 @@ function renderExport() {
   $("exportJson").value = JSON.stringify(payload, null, 2);
 }
 
-/* ========== RUNTIME ========== */
+/* ========== MEET SOMEONE (stories) ========== */
+const PERSONAS = {
+  sam: {
+    id: "sam",
+    name: "Sam",
+    line: "Bought lunch once. Didn’t come back.",
+    events: {
+      0: ["purchase"],
+    },
+  },
+  alex: {
+    id: "alex",
+    name: "Alex",
+    line: "Came back, unlocked a tier, never used the reward.",
+    events: {
+      0: ["purchase"],
+      5: ["purchase"],
+      6: ["tier"],
+    },
+  },
+  jordan: {
+    id: "jordan",
+    name: "Jordan",
+    line: "Already a regular — buys, tiers, redeems.",
+    events: {
+      0: ["purchase"],
+      3: ["purchase"],
+      9: ["purchase", "tier"],
+      11: ["redeem"],
+    },
+  },
+};
+
+let activePersona = "sam";
+const STORY_DAYS = 14;
+
+function humanWhen(day, firstPurchaseDay) {
+  if (day === 0) return "Day of first visit";
+  if (firstPurchaseDay != null && day === firstPurchaseDay + 1) return "The next day";
+  if (firstPurchaseDay != null) {
+    const after = day - firstPurchaseDay;
+    if (after > 0) return `${after} days after first visit`;
+  }
+  return `Day ${day}`;
+}
+
+function blankMember() {
+  return {
+    day: 0,
+    purchases: 0,
+    tier: false,
+    redeemed: false,
+    bpActive: false,
+    bpCompleted: false,
+    firstPurchaseDay: null,
+    lastPurchaseDay: null,
+    tierDay: null,
+    tp4Day: null,
+    bpExpiryDay: null,
+    sent: new Set(),
+    log: [],
+  };
+}
+
+function applyStoryEvent(state, type, levers) {
+  if (type === "purchase") {
+    state.purchases += 1;
+    state.lastPurchaseDay = state.day;
+    if (state.firstPurchaseDay == null) state.firstPurchaseDay = state.day;
+    if (state.bpActive) {
+      state.bpCompleted = true;
+      state.bpActive = false;
+    }
+    return {
+      kind: "visit",
+      when: humanWhen(state.day, state.firstPurchaseDay),
+      what: state.purchases === 1 ? "First visit" : `Visit #${state.purchases}`,
+      detail: state.purchases === 1 ? "They walk in and buy." : "They’re back in-store.",
+    };
+  }
+  if (type === "tier") {
+    if (state.tier) return null;
+    state.tier = true;
+    state.tierDay = state.day;
+    return {
+      kind: "note",
+      when: humanWhen(state.day, state.firstPurchaseDay),
+      what: "Tier unlocked",
+      detail: "Loyalty system marks them as tiered for the first time.",
+    };
+  }
+  if (type === "redeem") {
+    if (!state.tier || state.redeemed) return null;
+    state.redeemed = true;
+    return {
+      kind: "visit",
+      when: humanWhen(state.day, state.firstPurchaseDay),
+      what: "Used a reward",
+      detail: "They redeem in-store.",
+    };
+  }
+  return null;
+}
+
+function runStory(persona, levers, days) {
+  const rules = compileRules(levers);
+  const state = blankMember();
+  const timeline = [];
+  const script = persona.events;
+
+  for (let d = 0; d <= days; d++) {
+    state.day = d;
+
+    if (state.bpActive && state.bpExpiryDay != null && d > state.bpExpiryDay) {
+      state.bpActive = false;
+      timeline.push({
+        kind: "note",
+        when: humanWhen(d, state.firstPurchaseDay),
+        what: "Bonus offer expired",
+        detail: "They never completed it.",
+      });
+    }
+
+    const evs = script[d] || [];
+    evs.forEach((type) => {
+      const row = applyStoryEvent(state, type, levers);
+      if (row) timeline.push(row);
+    });
+
+    const matched = rules.filter((r) => r.match(state)).sort((a, b) => a.priority - b.priority);
+    const winner = matched[0] || null;
+    if (winner) {
+      state.sent.add(winner.id);
+      if (winner.id === "TP2") {
+        state.bpActive = true;
+        state.bpExpiryDay = d + levers.bpExpiry;
+      }
+      if (winner.id === "TP4") state.tp4Day = d;
+      timeline.push({
+        kind: "msg",
+        when: humanWhen(d, state.firstPurchaseDay),
+        what: `Message: ${winner.name}`,
+        detail: winner.then,
+      });
+    }
+  }
+
+  const sends = timeline.filter((t) => t.kind === "msg").length;
+  const visitCount = state.purchases;
+
+  let feel;
+  if (sends === 0) feel = "Silent — no program messages in this window.";
+  else if (sends <= 2) feel = "Light touch — a couple of well-timed messages.";
+  else if (sends <= 4) feel = "Steady cadence — present without constant pinging.";
+  else feel = "Busy inbox — lots of follow-ups; check opens/fatigue.";
+
+  let outcome;
+  if (persona.id === "sam") {
+    outcome = state.purchases >= 2
+      ? "In this script Sam still only shows as one visit — messages tried to pull a return."
+      : `Sam stays on one visit. The program sent ${sends} message${sends === 1 ? "" : "s"} trying to win them back.`;
+  } else if (persona.id === "alex") {
+    outcome = state.redeemed
+      ? "Alex used the reward."
+      : `Alex hit a tier but didn’t redeem. ${sends} message${sends === 1 ? "" : "s"} landed — was the reward nudge useful or noisy?`;
+  } else {
+    outcome = state.redeemed
+      ? `Jordan completed the loop (visit → tier → reward). ${sends} program message${sends === 1 ? "" : "s"} along the way — ideally mostly celebrations, not nagging.`
+      : `Jordan’s path ran with ${sends} message${sends === 1 ? "" : "s"}.`;
+  }
+
+  return {
+    timeline,
+    sends,
+    visits: visitCount,
+    tier: state.tier,
+    redeemed: state.redeemed,
+    feel,
+    outcome,
+    levers,
+  };
+}
+
+function quietLevers(base) {
+  return { ...base, tp1: 1, tp2a: 7, tp2b: 14, tp5: 10, tp6: 45, bp: true, recovery: true, n: base.n, horizon: base.horizon, seed: base.seed };
+}
+function intentLevers(base) {
+  return { ...base, tp1: 1, tp2a: 3, tp2b: 6, tp5: 5, tp6: 21, bp: true, recovery: true, n: base.n, horizon: base.horizon, seed: base.seed };
+}
+
+function renderTimeline(el, story) {
+  if (!story.timeline.length) {
+    el.innerHTML = '<li class="note"><div class="when">Quiet</div><div class="what">Nothing happened</div></li>';
+    return;
+  }
+  el.innerHTML = story.timeline.map((t) =>
+    `<li class="${t.kind}">
+      <div class="when">${t.when}</div>
+      <div class="what">${t.what}</div>
+      <div class="detail">${t.detail}</div>
+    </li>`
+  ).join("");
+}
+
+function renderStorySummary(el, story) {
+  el.innerHTML = `
+    <span><strong>${story.sends}</strong> messages</span>
+    <span><strong>${story.visits}</strong> visits</span>
+    <span>Tier <strong>${story.tier ? "yes" : "no"}</strong></span>
+    <span>Reward <strong>${story.redeemed ? "used" : "not used"}</strong></span>
+    <span>${story.feel}</span>
+  `;
+}
+
+function playStories() {
+  const persona = PERSONAS[activePersona];
+  const mode = $("storyCompare").value;
+  const active = { ...lockedLevers };
+  const a = runStory(persona, active, STORY_DAYS);
+
+  $("storyHeadA").textContent = "Active program";
+  $("storyCountA").textContent = a.sends + " msgs";
+  renderStorySummary($("storySumA"), a);
+  renderTimeline($("storyTimeA"), a);
+
+  let b = null;
+  let bLabel = "";
+  if (mode === "quiet") {
+    b = runStory(persona, quietLevers(active), STORY_DAYS);
+    bLabel = "Protect the inbox";
+  } else if (mode === "intent") {
+    b = runStory(persona, intentLevers(active), STORY_DAYS);
+    bLabel = "Catch high intent";
+  } else if (mode === "b") {
+    if (!snapB) {
+      toast("Save option B in Compare first — showing active only.");
+    } else {
+      b = runStory(persona, { ...snapB }, STORY_DAYS);
+      bLabel = "Compare option B";
+    }
+  }
+
+  if (b) {
+    $("storyPanelB").style.display = "";
+    $("storyGrid").style.gridTemplateColumns = "1fr 1fr";
+    $("storyHeadB").textContent = bLabel;
+    $("storyCountB").textContent = b.sends + " msgs";
+    renderStorySummary($("storySumB"), b);
+    renderTimeline($("storyTimeB"), b);
+    const diff = a.sends - b.sends;
+    const diffLine = diff === 0
+      ? "Same message count — check which moments differ."
+      : diff > 0
+        ? `Active sends ${diff} more message${diff === 1 ? "" : "s"} than ${bLabel}.`
+        : `${bLabel} sends ${-diff} more message${-diff === 1 ? "" : "s"} than Active.`;
+    $("storyOutcomeTitle").textContent = `${persona.name}: ${persona.line}`;
+    $("storyOutcomeBody").textContent = `${a.outcome} ${diffLine}`;
+  } else {
+    $("storyPanelB").style.display = "none";
+    $("storyGrid").style.gridTemplateColumns = "1fr";
+    $("storyOutcomeTitle").textContent = `${persona.name}: ${persona.line}`;
+    $("storyOutcomeBody").textContent = a.outcome + " " + a.feel;
+  }
+
+  // keep advanced member roughly in sync with end of story A
+  member = freshMember();
+  member.purchases = a.visits;
+  member.tier = a.tier;
+  member.redeemed = a.redeemed;
+  member.day = STORY_DAYS;
+  evaluateRuntime(false);
+}
+
+/* ========== RUNTIME (advanced) ========== */
 function daysSinceAction() {
   const a = [member.lastPurchaseDay, member.tierDay, member.tp4Day].filter((d) => d != null);
   if (!a.length) return null;
@@ -1712,6 +2155,7 @@ function daysSinceAction() {
 }
 
 function evaluateRuntime(autoSend) {
+  if (!$("dayLabel")) return;
   const matched = lockedRules.filter((r) => r.match(member)).sort((a, b) => a.priority - b.priority);
   const winner = matched[0] || null;
 
@@ -1719,41 +2163,48 @@ function evaluateRuntime(autoSend) {
   $("valPurchases").textContent = String(member.purchases);
   const dsa = daysSinceAction();
   $("valDays").textContent = dsa == null ? "—" : String(dsa);
-  $("hintDays").textContent = dsa == null ? "no clock" : "since last signal";
+  $("hintDays").textContent = dsa == null ? "" : "since last signal";
   $("valTier").textContent = member.tier ? "Yes" : "No";
   $("valRedeemed").textContent = member.redeemed ? "Yes" : "No";
   $("dimPurchases").classList.toggle("active", member.purchases > 0);
   $("dimTier").classList.toggle("active", member.tier);
   $("dimRedeemed").classList.toggle("active", member.redeemed);
   $("dimDays").classList.toggle("active", dsa != null);
-  $("togBp").classList.toggle("on", member.bpActive);
-  $("togBpDone").classList.toggle("on", member.bpCompleted);
-  $("btnTier").disabled = member.tier || member.purchases < 1;
-  $("btnRedeem").disabled = !member.tier || member.redeemed;
-  $("btnActivateBp").disabled = member.bpActive || member.bpCompleted;
-
-  const list = $("fireList");
-  if (!matched.length) {
-    list.innerHTML = '<div class="empty">No rule matches this state on this day.</div>';
-    $("evalBadge").textContent = "no match";
-  } else {
-    list.innerHTML = matched.map((r) => {
-      const win = winner && r.id === winner.id;
-      return `<div class="fire ${win ? "winner" : "suppressed"}">
-        <div class="fire-top">
-          <strong>${r.name}</strong>
-          <span class="pill ${win ? "warn" : ""}">${win ? "send this" : "hold"}</span>
-          <span class="pill">${r.path}</span>
-        </div>
-        <p>${r.then}</p>
-      </div>`;
-    }).join("");
-    $("evalBadge").textContent = matched.length + " option(s)";
+  if ($("togBp")) {
+    $("togBp").classList.toggle("on", member.bpActive);
+    $("togBpDone").classList.toggle("on", member.bpCompleted);
+  }
+  if ($("btnTier")) {
+    $("btnTier").disabled = member.tier || member.purchases < 1;
+    $("btnRedeem").disabled = !member.tier || member.redeemed;
+    $("btnActivateBp").disabled = member.bpActive || member.bpCompleted;
   }
 
-  const nba = nextBestActionCopy(matched, winner, member);
-  $("nbaBox").querySelector("h3").textContent = nba.title;
-  $("nbaText").textContent = nba.body;
+  const list = $("fireList");
+  if (list) {
+    if (!matched.length) {
+      list.innerHTML = '<div class="empty">No message matches today.</div>';
+      if ($("evalBadge")) $("evalBadge").textContent = "no match";
+    } else {
+      list.innerHTML = matched.map((r) => {
+        const win = winner && r.id === winner.id;
+        return `<div class="fire ${win ? "winner" : "suppressed"}">
+          <div class="fire-top">
+            <strong>${r.name}</strong>
+            <span class="pill ${win ? "warn" : ""}">${win ? "send this" : "hold"}</span>
+          </div>
+          <p>${r.then}</p>
+        </div>`;
+      }).join("");
+      if ($("evalBadge")) $("evalBadge").textContent = matched.length + " option(s)";
+    }
+  }
+
+  if ($("nbaBox")) {
+    const nba = nextBestActionCopy(matched, winner, member);
+    $("nbaBox").querySelector("h3").textContent = nba.title;
+    $("nbaText").textContent = nba.body;
+  }
 
   if (autoSend && winner) {
     member.sent.add(winner.id);
@@ -1762,8 +2213,8 @@ function evaluateRuntime(autoSend) {
       member.bpExpiryDay = member.day + lockedLevers.bpExpiry;
     }
     if (winner.id === "TP4") member.tp4Day = member.day;
-    member.log.unshift({ day: member.day, type: "send", id: winner.id, msg: winner.then });
-    $("evalBadge").textContent = "sent · " + winner.name;
+    member.log.unshift({ day: member.day, type: "send", id: winner.id, msg: winner.name });
+    if ($("evalBadge")) $("evalBadge").textContent = "sent · " + winner.name;
     evaluateRuntime(false);
     return;
   }
@@ -1772,6 +2223,7 @@ function evaluateRuntime(autoSend) {
 
 function renderLog() {
   const el = $("log");
+  if (!el) return;
   if (!member.log.length) {
     el.innerHTML = '<li><span class="msg" style="grid-column:1/-1;text-align:center">Log empty</span></li>';
     return;
@@ -1826,7 +2278,10 @@ $("btnGuideRun").onclick = () => {
 $("btnGuideRuntime").onclick = () => {
   lockProgram(readLevers(), "guide");
   goTab("runtime");
-  toast("Click “+1 day” a few times — watch what we’d send.");
+  activePersona = "sam";
+  document.querySelectorAll(".persona").forEach((p) => p.classList.toggle("on", p.dataset.persona === "sam"));
+  playStories();
+  toast("Here’s Sam’s next two weeks on your program.");
 };
 
 $("btnRecommend").onclick = () => {
@@ -1900,6 +2355,23 @@ $("btnAdvance").onclick = () => advance(1);
 $("btnAdvance7").onclick = () => advance(7);
 $("btnResetMember").onclick = () => { member = freshMember(); evaluateRuntime(false); };
 $("btnClearLog").onclick = () => { member.log = []; renderLog(); };
+
+document.querySelectorAll(".persona").forEach((btn) => {
+  btn.onclick = () => {
+    activePersona = btn.dataset.persona;
+    document.querySelectorAll(".persona").forEach((p) => p.classList.toggle("on", p === btn));
+  };
+});
+$("btnPlayStory").onclick = () => playStories();
+$("btnReplayStory").onclick = () => playStories();
+$("btnAdvanced").onclick = () => {
+  const box = $("advancedBox");
+  const on = box.classList.toggle("on");
+  $("btnAdvanced").textContent = on
+    ? "Hide advanced controls"
+    : "Show advanced controls (manual day stepping)";
+};
+
 $("btnPurchase").onclick = () => {
   member.purchases += 1;
   member.lastPurchaseDay = member.day;
