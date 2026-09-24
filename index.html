@@ -547,22 +547,24 @@
 
       .day-bar {
         padding: 12px 12px;
-        gap: 10px;
+        gap: 8px;
       }
 
       .day-bar .clock {
         width: 100%;
         font-size: 1.2rem;
+        min-width: 0;
       }
 
-      .day-bar .btn {
-        flex: 1 1 calc(50% - 6px);
+      .day-bar .btn,
+      .events .btn {
+        flex: 1 1 100%;
+        width: 100%;
         min-width: 0;
         text-align: center;
-      }
-
-      .day-bar .btn-ghost {
-        flex: 1 1 100%;
+        white-space: normal;
+        line-height: 1.3;
+        padding: 12px 12px;
       }
 
       .dims {
@@ -572,6 +574,7 @@
 
       .dim {
         padding: 10px;
+        min-width: 0;
       }
 
       .dim .val {
@@ -583,15 +586,19 @@
         letter-spacing: 0.04em;
       }
 
-      .events .btn {
-        flex: 1 1 calc(50% - 4px);
-        min-width: 0;
-        text-align: center;
-        font-size: 0.75rem;
-        padding: 10px 8px;
+      .dim .hint {
+        overflow-wrap: anywhere;
+      }
+
+      .events {
+        gap: 8px;
       }
 
       .panel-b { padding: 12px; }
+
+      .fire-top strong {
+        font-size: 0.85rem;
+      }
 
       .log li {
         grid-template-columns: 40px 52px minmax(0, 1fr);
@@ -606,6 +613,7 @@
 
       .lc .name {
         grid-column: 1;
+        overflow-wrap: anywhere;
       }
 
       .lc .why {
@@ -632,11 +640,6 @@
     @media (max-width: 380px) {
       .dims {
         grid-template-columns: 1fr;
-      }
-
-      .day-bar .btn,
-      .events .btn {
-        flex: 1 1 100%;
       }
 
       .log li {
