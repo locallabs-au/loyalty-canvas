@@ -1,29 +1,20 @@
 ﻿# Loyalty Studio
 
-Simulate outcomes → lock rules → ship the program.
-
-Not a journey map. A scrappy design lab: tweak nurture levers (from the scamp timings), run a directional cohort sim, compare variants, export WHEN/THEN rules for CRM/ESP.
+Test when loyalty messages should go out — and what they’re trying to achieve — before you build them for real.
 
 ## Live
 
-After GitHub Pages is enabled:
-
 **https://locallabs-au.github.io/loyalty-canvas/**
 
-## Modes
+## How to use
 
-| Tab | Purpose |
-|-----|---------|
-| **Design** | Levers + assumptions → run simulation → outcomes |
-| **Compare** | Snapshot A/B from Design, pick a winner |
-| **Runtime** | One-member state engine using locked rules |
-| **Export** | Rule table + JSON for implementation |
+1. **Design** — set timings for each message (first points, bonus offer, reward reminder, come-back…)
+2. **Recommend** — optimise for action, opens, return visits, or reward use
+3. **Compare** — save two setups side by side
+4. **Preview one person** — step day by day and see what would send
+5. **Export** — hand rules to your CRM team
 
-## Defaults
-
-Scamp-aligned timings: TP1 +1d · TP2 +4/+8d · TP3 expiry−5d · TP4 +1/3/7d · TP5 +7d · TP6 +30d · Retain at 3 purchases.
-
-Conversion assumptions are **plausible / directional** — labelled in the UI, not a forecast.
+Defaults follow common QSR-style loyalty cadence. Automotive and other verticals can be added later.
 
 ## Local
 

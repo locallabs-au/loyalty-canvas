@@ -727,11 +727,11 @@
     <header class="brand">
       <div>
         <h1>Loyalty <em>Studio</em></h1>
-        <p class="tag">A sandbox to try nurture timings before you build them in your ESP.</p>
+        <p class="tag">Test when loyalty messages should go out — and what they’re trying to achieve — before you build them for real.</p>
       </div>
       <div class="brand-meta">
-        <strong>What is this?</strong>
-        Fake customers · real rule logic · rough outcomes
+        <strong>For strategists &amp; CRM teams</strong>
+        Design → recommend → preview → export
       </div>
     </header>
 
@@ -739,37 +739,37 @@
       <div class="guide-body">
         <h2>Start here (90 seconds)</h2>
         <p>
-          Your scamps showed emails in a line (1st purchase → bonus → redeem…).
-          This tool treats that as <strong>rules on customer state</strong> instead:
-          “if they’ve bought once and it’s been 4 days, send the bonus offer.”
-          You twist the dials, we pretend 800 shoppers go through the program, and you see
-          roughly who buys again / hits tier / redeems — then you lock those timings as the program.
+          Loyalty programs aren’t really a straight line of emails. They’re
+          <strong>messages that fire when someone is in a certain situation</strong>
+          (bought once, hit a tier, hasn’t redeemed yet, gone quiet…).
+          This tool lets you set those timings, pressure-test them on a modelled audience,
+          and get recommendations aimed at opens or actions — then preview one person day by day.
         </p>
         <div class="guide-steps">
           <div class="guide-step">
             <div class="n">1</div>
-            <strong>Leave the dials</strong>
-            <span>Defaults match your scamp (+1 day, +4/+8, +7, +30). Don’t overthink yet.</span>
+            <strong>Leave the timings</strong>
+            <span>Defaults are a sensible starting point (+1 day, +4/+8, +7, +30). Don’t overthink yet.</span>
           </div>
           <div class="guide-step">
             <div class="n">2</div>
-            <strong>Hit “Run simulation”</strong>
-            <span>Watch the scoreboard fill in. Those %s are directional guesses, not truth.</span>
+            <strong>Run a test</strong>
+            <span>The scoreboard estimates return visits, tier, redemptions, and how many messages people get.</span>
           </div>
           <div class="guide-step">
             <div class="n">3</div>
-            <strong>Change one dial</strong>
-            <span>e.g. move TP2 from 4 → 10 days. Run again. Did 2nd purchase go up or down?</span>
+            <strong>Ask for recommendations</strong>
+            <span>Optimise for “most likely to act” or “most likely to open” — not just “send earlier”.</span>
           </div>
           <div class="guide-step">
             <div class="n">4</div>
-            <strong>Save → recommend or try one</strong>
-            <span>Or skip to Recommend and let the engine rank timing recipes for you.</span>
+            <strong>Preview one person</strong>
+            <span>Save a setup, then step day by day to see which message would go out and why.</span>
           </div>
         </div>
         <div class="guide-actions">
-          <button type="button" class="btn btn-primary" id="btnGuideRun">Run with scamp defaults</button>
-          <button type="button" class="btn btn-honey" id="btnGuideRuntime">Show me one customer</button>
+          <button type="button" class="btn btn-primary" id="btnGuideRun">Run with default timings</button>
+          <button type="button" class="btn btn-honey" id="btnGuideRuntime">Preview one person</button>
           <button type="button" class="btn btn-ghost" id="btnGuideHide">Got it — hide</button>
         </div>
       </div>
@@ -782,7 +782,7 @@
       <button type="button" class="tab on" data-view="design">1 · Design</button>
       <button type="button" class="tab" data-view="recommend">2 · Recommend</button>
       <button type="button" class="tab" data-view="compare">3 · Compare</button>
-      <button type="button" class="tab" data-view="runtime">4 · Try one customer</button>
+      <button type="button" class="tab" data-view="runtime">4 · Preview one person</button>
       <button type="button" class="tab" data-view="export">5 · Export</button>
     </nav>
 
@@ -790,65 +790,75 @@
     <div class="view on" id="view-design">
       <div class="grid-2">
         <section class="panel">
-          <div class="panel-h"><h2>When should each email fire?</h2><span class="pill warn">from your scamps</span></div>
+          <div class="panel-h"><h2>When should each message go out?</h2><span class="pill warn" id="verticalPill">QSR-style</span></div>
           <div class="panel-b">
             <label class="field">
-              <span class="l">TP1 delay (days after 1st purchase)</span>
+              <span class="l">Category</span>
+              <select id="lev_vertical">
+                <option value="qsr" selected>Quick service / food &amp; drink — return visits &amp; offers</option>
+                <option value="auto" disabled>Automotive — service &amp; ownership (coming later)</option>
+                <option value="retail" disabled>General retail (coming later)</option>
+              </select>
+              <div class="hint">Changes how we talk about goals. Full vertical packs can come later.</div>
+            </label>
+            <label class="field">
+              <span class="l">First points celebration — days after first purchase</span>
               <div class="range-row">
                 <input type="range" id="lev_tp1" min="0" max="5" value="1" />
                 <output id="out_tp1">1</output>
               </div>
-              <div class="hint">Scamp: +1 day · Progress Recognition</div>
+              <div class="hint">“You earned points” — usually the day after they buy.</div>
             </label>
             <label class="field">
-              <span class="l">TP2 first nudge (days)</span>
+              <span class="l">Bonus points offer — first send (days after first purchase)</span>
               <div class="range-row">
                 <input type="range" id="lev_tp2a" min="2" max="14" value="4" />
                 <output id="out_tp2a">4</output>
               </div>
-              <div class="hint">Scamp: +4 or +8 · Bonus Point Offer</div>
+              <div class="hint">Invite them back with a bonus if they haven’t returned yet.</div>
             </label>
             <label class="field">
-              <span class="l">TP2 second nudge (days)</span>
+              <span class="l">Bonus points offer — second send (days after first purchase)</span>
               <div class="range-row">
                 <input type="range" id="lev_tp2b" min="3" max="21" value="8" />
                 <output id="out_tp2b">8</output>
               </div>
+              <div class="hint">Follow-up if they’re still on one visit.</div>
             </label>
             <label class="field">
-              <span class="l">BP offer length (days)</span>
+              <span class="l">How long the bonus offer lasts (days)</span>
               <div class="range-row">
                 <input type="range" id="lev_bpExpiry" min="7" max="28" value="14" />
                 <output id="out_bpExpiry">14</output>
               </div>
             </label>
             <label class="field">
-              <span class="l">TP3 reminder (days before BP expiry)</span>
+              <span class="l">Bonus offer reminder — days before it expires</span>
               <div class="range-row">
                 <input type="range" id="lev_tp3" min="1" max="10" value="5" />
                 <output id="out_tp3">5</output>
               </div>
-              <div class="hint">Scamp: 5 days before expiry</div>
+              <div class="hint">Last chance before the offer dies.</div>
             </label>
             <label class="field">
-              <span class="l">TP5 after TP4 (days)</span>
+              <span class="l">Reward reminder — days after “tier unlocked” message</span>
               <div class="range-row">
                 <input type="range" id="lev_tp5" min="3" max="21" value="7" />
                 <output id="out_tp5">7</output>
               </div>
-              <div class="hint">Scamp: +7 days · Reward Reminder</div>
+              <div class="hint">They’ve unlocked a reward but haven’t used it yet.</div>
             </label>
             <label class="field">
-              <span class="l">TP6 habit idle (days)</span>
+              <span class="l">Come-back nudge — days of silence after last purchase</span>
               <div class="range-row">
                 <input type="range" id="lev_tp6" min="14" max="60" value="30" />
                 <output id="out_tp6">30</output>
               </div>
-              <div class="hint">Scamp: +30 days · Habit Builder</div>
+              <div class="hint">Win back people who went quiet after 1–2 visits.</div>
             </label>
 
-            <div class="check"><input type="checkbox" id="lev_bp" checked /> BP offer enabled (TP2/TP3)</div>
-            <div class="check"><input type="checkbox" id="lev_recovery" checked /> Recovery path (TP3, TP5, TP6)</div>
+            <div class="check"><input type="checkbox" id="lev_bp" checked /> Include bonus points offer + reminder</div>
+            <div class="check"><input type="checkbox" id="lev_recovery" checked /> Include follow-ups (reminder, reward nudge, come-back)</div>
           </div>
         </section>
 
@@ -856,66 +866,62 @@
           <div class="panel-h"><h2>Test setup</h2></div>
           <div class="panel-b">
             <label class="field">
-              <span class="l">Members to simulate</span>
+              <span class="l">People in the model</span>
               <div class="range-row">
                 <input type="range" id="lev_n" min="100" max="2000" step="100" value="800" />
                 <output id="out_n">800</output>
               </div>
             </label>
             <label class="field">
-              <span class="l">Horizon (days)</span>
+              <span class="l">Days to simulate</span>
               <div class="range-row">
                 <input type="range" id="lev_horizon" min="30" max="90" step="5" value="60" />
                 <output id="out_horizon">60</output>
               </div>
             </label>
             <label class="field">
-              <span class="l">Random seed</span>
+              <span class="l">Random seed (same seed = same result)</span>
               <input type="number" id="lev_seed" value="42" />
             </label>
 
-            <p class="assumptions" style="margin: 12px 0 8px;">
-              Archetype mix (plausible retail loyalty):
-              <code>50%</code> cold-start ·
-              <code>30%</code> habit-former ·
-              <code>20%</code> tier-chaser.
-              Base 2nd purchase without nudge <code>18%</code>;
-              TP2 lift <code>+12pp</code>;
-              tier given 2+ purchases <code>35–55%</code> by archetype;
-              redeem given tier <code>40%</code>, +TP5 <code>+15pp</code>;
-              each extra recovery comm fatigue <code>−2pp</code> on next action.
-              Directional only — not a forecast.
+            <p class="assumptions" style="margin: 12px 0 8px;" id="assumptionsCopy">
+              Model mix: <code>50%</code> one-and-done ·
+              <code>30%</code> occasional returners ·
+              <code>20%</code> loyalty-chasers.
+              Without a nudge, about <code>18%</code> come back for a 2nd visit;
+              a well-timed bonus offer can add roughly <code>+12pp</code>.
+              Estimates only — useful for comparing options, not forecasting a P&amp;L.
             </p>
 
             <div class="btn-row">
-              <button type="button" class="btn btn-primary" id="btnRun">Run simulation</button>
-              <button type="button" class="btn btn-honey" id="btnLock">Save these timings as the program</button>
-              <button type="button" class="btn btn-ghost" id="btnResetLevers">Reset to scamp defaults</button>
+              <button type="button" class="btn btn-primary" id="btnRun">Run test</button>
+              <button type="button" class="btn btn-honey" id="btnLock">Save as active program</button>
+              <button type="button" class="btn btn-ghost" id="btnResetLevers">Reset to defaults</button>
             </div>
             <div class="callout">
-              <strong>Plain English:</strong> left side = when emails go out.
-              Right side = how many fake shoppers to test on.
-              Outcomes below = rough scoreboard after the test.
+              <strong>Left:</strong> when each message fires.
+              <strong>Right:</strong> how big the test is.
+              <strong>Below:</strong> estimated results after you run.
             </div>
           </div>
         </section>
       </div>
 
       <section class="panel" style="margin-top: 16px;">
-          <div class="panel-h">
-          <h2>Scoreboard (after you run)</h2>
-          <span class="pill" id="simStatus">not run yet — press Run simulation</span>
+        <div class="panel-h">
+          <h2>Results</h2>
+          <span class="pill" id="simStatus">not run yet — press Run test</span>
         </div>
         <div class="panel-b">
           <div class="stats" id="outcomeStats">
-            <div class="stat"><div class="k">2nd purchase</div><div class="v">—</div><div class="s">of cohort</div></div>
-            <div class="stat blush"><div class="k">Hit tier</div><div class="v">—</div><div class="s">first-time</div></div>
-            <div class="stat moss"><div class="k">Redeemed</div><div class="v">—</div><div class="s">1st reward</div></div>
-            <div class="stat"><div class="k">Retain (3+)</div><div class="v">—</div><div class="s">habit gate</div></div>
-            <div class="stat"><div class="k">Comms / member</div><div class="v">—</div><div class="s">avg sends</div></div>
-            <div class="stat blush"><div class="k">Cost score</div><div class="v">—</div><div class="s">relative index</div></div>
-            <div class="stat moss"><div class="k">Efficiency</div><div class="v">—</div><div class="s">redeem % / comms</div></div>
-            <div class="stat"><div class="k">Days to 2nd</div><div class="v">—</div><div class="s">median (among converters)</div></div>
+            <div class="stat"><div class="k">Return visit</div><div class="v">—</div><div class="s">2nd purchase</div></div>
+            <div class="stat blush"><div class="k">Hit a tier</div><div class="v">—</div><div class="s">first time</div></div>
+            <div class="stat moss"><div class="k">Used a reward</div><div class="v">—</div><div class="s">1st redemption</div></div>
+            <div class="stat"><div class="k">Habit (3+ visits)</div><div class="v">—</div><div class="s">repeat buyers</div></div>
+            <div class="stat"><div class="k">Messages / person</div><div class="v">—</div><div class="s">avg sends</div></div>
+            <div class="stat blush"><div class="k">Inbox load</div><div class="v">—</div><div class="s">relative cost index</div></div>
+            <div class="stat moss"><div class="k">Action per message</div><div class="v">—</div><div class="s">redeem % ÷ sends</div></div>
+            <div class="stat"><div class="k">Days to return</div><div class="v">—</div><div class="s">median among returners</div></div>
           </div>
         </div>
       </section>
@@ -925,38 +931,39 @@
     <div class="view" id="view-recommend">
       <section class="panel">
         <div class="panel-h">
-          <h2>Recommendations engine</h2>
-          <span class="pill warn">searches timing recipes</span>
+          <h2>What should we optimise for?</h2>
+          <span class="pill warn">strategic</span>
         </div>
         <div class="panel-b">
           <p style="color:var(--muted);font-size:0.92rem;max-width:62ch;margin-bottom:16px">
-            Pick what you care about. We’ll try a bunch of timing recipes (scamp defaults,
-            aggressive, patient, no recovery, your current dials, and nearby tweaks),
-            score each on fake shoppers, and rank the top ones — with a plain-English why.
+            Instead of only asking “send earlier?”, pick the outcome that matters.
+            For QSR that often means <strong>getting them back in-store</strong> or
+            <strong>protecting opens</strong> so the next offer still gets seen.
+            We’ll score several program setups and rank them.
           </p>
           <label class="field">
-            <span class="l">Optimise for</span>
+            <span class="l">Primary goal</span>
             <select id="recGoal">
-              <option value="balanced">Balanced (purchases + redeem − cost)</option>
-              <option value="second">More 2nd purchases</option>
-              <option value="redeem">More 1st redemptions</option>
-              <option value="efficiency">Best efficiency (redeem % / comms)</option>
-              <option value="retain">More habit / retain (3+ purchases)</option>
+              <option value="action">Most likely to trigger an action (return or redeem)</option>
+              <option value="open">Most likely to open (lighter inbox, less fatigue)</option>
+              <option value="return">Drive a return visit</option>
+              <option value="redeem">Drive reward use</option>
+              <option value="efficiency">Best action per message</option>
             </select>
           </label>
           <div class="btn-row">
             <button type="button" class="btn btn-primary" id="btnRecommend">Find recommendations</button>
-            <button type="button" class="btn btn-ghost" id="btnRecFromDesign">Use current Design dials as baseline</button>
+            <button type="button" class="btn btn-ghost" id="btnRecFromDesign">Use current Design timings as baseline</button>
           </div>
           <div class="callout">
-            <strong>Not magic.</strong> Same directional sim as Design — just automated A/B/C…
-            Use it to shortlist, then sanity-check in “Try one customer”.
+            <strong>How to read this:</strong> “Most likely to open” prefers fewer, better-timed messages.
+            “Most likely to act” prefers setups that move visits and redemptions — even if the inbox is busier.
           </div>
         </div>
       </section>
       <section class="panel" style="margin-top:16px">
         <div class="panel-h">
-          <h2>Ranked recipes</h2>
+          <h2>Recommended programs</h2>
           <span class="pill" id="recStatus">not run</span>
         </div>
         <div class="panel-b" id="recList">
@@ -969,27 +976,27 @@
     <div class="view" id="view-compare">
       <section class="panel">
         <div class="panel-h">
-          <h2>Variant A vs B</h2>
+          <h2>Side-by-side</h2>
           <div class="btn-row" style="margin:0">
-            <button type="button" class="btn btn-honey" id="btnSnapA">Snapshot A from Design</button>
-            <button type="button" class="btn btn-honey" id="btnSnapB">Snapshot B from Design</button>
-            <button type="button" class="btn btn-primary" id="btnCompare">Run compare</button>
+            <button type="button" class="btn btn-honey" id="btnSnapA">Save current as A</button>
+            <button type="button" class="btn btn-honey" id="btnSnapB">Save current as B</button>
+            <button type="button" class="btn btn-primary" id="btnCompare">Compare A vs B</button>
           </div>
         </div>
         <div class="panel-b">
           <div class="grid-2" id="compareGrid">
             <div class="compare-col" id="colA">
-              <h3>Variant A</h3>
-              <p class="empty">Snapshot levers from Design first.</p>
+              <h3>Option A</h3>
+              <p class="empty">Save timings from Design first.</p>
             </div>
             <div class="compare-col" id="colB">
-              <h3>Variant B</h3>
-              <p class="empty">Snapshot levers from Design first.</p>
+              <h3>Option B</h3>
+              <p class="empty">Change Design, then save as B.</p>
             </div>
           </div>
           <div class="btn-row">
-            <button type="button" class="btn btn-primary" id="btnUseA" disabled>Lock A as program</button>
-            <button type="button" class="btn btn-primary" id="btnUseB" disabled>Lock B as program</button>
+            <button type="button" class="btn btn-primary" id="btnUseA" disabled>Use A as active program</button>
+            <button type="button" class="btn btn-primary" id="btnUseB" disabled>Use B as active program</button>
           </div>
         </div>
       </section>
@@ -999,42 +1006,42 @@
     <div class="view" id="view-runtime">
       <div class="day-bar">
         <div class="clock">Day <span id="dayLabel">0</span></div>
-        <button type="button" class="btn btn-primary" id="btnAdvance">+1 day &amp; evaluate</button>
+        <button type="button" class="btn btn-primary" id="btnAdvance">+1 day</button>
         <button type="button" class="btn" id="btnAdvance7">+7 days</button>
-        <button type="button" class="btn btn-ghost" id="btnResetMember">Reset member</button>
+        <button type="button" class="btn btn-ghost" id="btnResetMember">Reset person</button>
       </div>
       <div class="grid-2">
         <section class="panel">
-          <div class="panel-h"><h2>Member state</h2><span class="pill on" id="lockedPill">using locked rules</span></div>
+          <div class="panel-h"><h2>This person</h2><span class="pill on" id="lockedPill">using saved program</span></div>
           <div class="panel-b">
             <div class="dims">
-              <div class="dim" id="dimPurchases"><label>Purchases</label><div class="val" id="valPurchases">0</div><div class="hint">count</div></div>
-              <div class="dim" id="dimDays"><label>Days since action</label><div class="val" id="valDays">—</div><div class="hint" id="hintDays">no clock</div></div>
-              <div class="dim" id="dimTier"><label>Tier</label><div class="val" id="valTier">No</div><div class="hint">binary</div></div>
-              <div class="dim" id="dimRedeemed"><label>1st redeemed</label><div class="val" id="valRedeemed">No</div><div class="hint">binary</div></div>
+              <div class="dim" id="dimPurchases"><label>Visits / purchases</label><div class="val" id="valPurchases">0</div><div class="hint">count</div></div>
+              <div class="dim" id="dimDays"><label>Days since last signal</label><div class="val" id="valDays">—</div><div class="hint" id="hintDays">no clock yet</div></div>
+              <div class="dim" id="dimTier"><label>Tier unlocked</label><div class="val" id="valTier">No</div><div class="hint">yes / no</div></div>
+              <div class="dim" id="dimRedeemed"><label>Used a reward</label><div class="val" id="valRedeemed">No</div><div class="hint">yes / no</div></div>
             </div>
-            <div class="toggle" id="togBp"><span>BP offer active</span><div class="switch"></div></div>
-            <div class="toggle" id="togBpDone"><span>BP completed</span><div class="switch"></div></div>
+            <div class="toggle" id="togBp"><span>Bonus offer is active</span><div class="switch"></div></div>
+            <div class="toggle" id="togBpDone"><span>Bonus offer completed</span><div class="switch"></div></div>
             <div class="btn-row" style="margin-top:14px">
-              <button type="button" class="btn btn-honey" id="btnPurchase">Record purchase</button>
-              <button type="button" class="btn" id="btnTier">Achieve tier</button>
-              <button type="button" class="btn" id="btnRedeem">Redeem 1st reward</button>
-              <button type="button" class="btn" id="btnActivateBp">Activate BP offer</button>
+              <button type="button" class="btn btn-honey" id="btnPurchase">They purchased</button>
+              <button type="button" class="btn" id="btnTier">They hit a tier</button>
+              <button type="button" class="btn" id="btnRedeem">They used a reward</button>
+              <button type="button" class="btn" id="btnActivateBp">Start bonus offer</button>
             </div>
           </div>
         </section>
         <section class="panel">
-          <div class="panel-h"><h2>Eligible tonight</h2><span class="pill" id="evalBadge">idle</span></div>
+          <div class="panel-h"><h2>What should we send?</h2><span class="pill" id="evalBadge">idle</span></div>
           <div class="panel-b">
             <div class="nba-box" id="nbaBox">
-              <h3>Next best action</h3>
-              <p id="nbaText">Advance a day or change state — we’ll recommend what to send (or wait).</p>
+              <h3>Suggested next step</h3>
+              <p id="nbaText">Step forward a day or change their situation — we’ll suggest what to send, or to wait.</p>
             </div>
-            <div id="fireList"><div class="empty">Advance a day or fire an event.</div></div>
+            <div id="fireList"><div class="empty">Nothing queued yet.</div></div>
           </div>
         </section>
         <section class="panel" style="grid-column:1/-1">
-          <div class="panel-h"><h2>Send &amp; event log</h2><button type="button" class="btn btn-ghost" id="btnClearLog">Clear</button></div>
+          <div class="panel-h"><h2>Activity log</h2><button type="button" class="btn btn-ghost" id="btnClearLog">Clear</button></div>
           <div class="panel-b"><ul class="log" id="log"></ul></div>
         </section>
       </div>
@@ -1044,18 +1051,18 @@
     <div class="view" id="view-export">
       <section class="panel">
         <div class="panel-h">
-          <h2>Locked program rules</h2>
+          <h2>Program rules to hand to your CRM team</h2>
           <button type="button" class="btn btn-primary" id="btnCopy">Copy JSON</button>
         </div>
         <div class="panel-b">
           <div class="table-scroll" style="margin-bottom:16px">
             <table class="rules"><thead>
-              <tr><th>ID</th><th>Name</th><th>P</th><th>WHEN</th><th>THEN</th><th>Path</th></tr>
+              <tr><th>Message</th><th>Priority</th><th>When</th><th>What it does</th><th>Type</th></tr>
             </thead><tbody id="rulesBody"></tbody></table>
           </div>
           <textarea id="exportJson" readonly spellcheck="false"></textarea>
           <div class="callout">
-            Hand this to CRM/ESP as the nurture decision layer — state triggers, not a linear journey.
+            These are situation-based sends (when someone is in state X, send Y) — not a fixed left-to-right journey.
           </div>
         </div>
       </section>
@@ -1074,7 +1081,7 @@ function mulberry32(a) {
 }
 
 /* ========== LEVERS ========== */
-const SCAMP_DEFAULTS = {
+const PROGRAM_DEFAULTS = {
   tp1: 1,
   tp2a: 4,
   tp2b: 8,
@@ -1087,6 +1094,16 @@ const SCAMP_DEFAULTS = {
   n: 800,
   horizon: 60,
   seed: 42,
+};
+const SCAMP_DEFAULTS = PROGRAM_DEFAULTS; // alias for any leftover refs
+
+const MSG = {
+  TP1: { name: "First points celebration", path: "Core" },
+  TP2: { name: "Bonus points offer", path: "Core" },
+  TP3: { name: "Bonus offer reminder", path: "Follow-up" },
+  TP4: { name: "Tier unlocked", path: "Core" },
+  TP5: { name: "Reward reminder", path: "Follow-up" },
+  TP6: { name: "Come-back nudge", path: "Follow-up" },
 };
 
 function readLevers() {
@@ -1135,11 +1152,11 @@ function compileRules(L) {
   const rules = [];
   rules.push({
     id: "TP1",
-    name: "Progress Recognition",
+    name: MSG.TP1.name,
     priority: 10,
-    path: "Happy",
-    when: `purchases ≥ 1 · day = first_purchase + ${L.tp1} · not sent`,
-    then: "Celebrate 1st points earned",
+    path: MSG.TP1.path,
+    when: `After first purchase · wait ${L.tp1} day(s) · not already sent`,
+    then: "Celebrate first points earned",
     enabled: true,
     match(s) {
       if (s.purchases < 1 || s.sent.has("TP1") || s.firstPurchaseDay == null) return false;
@@ -1148,11 +1165,11 @@ function compileRules(L) {
   });
   rules.push({
     id: "TP4",
-    name: "Reward Unlock Celebration",
+    name: MSG.TP4.name,
     priority: 15,
-    path: "Happy",
-    when: "tier first-time · day ∈ tier+{1,3,7} · not sent",
-    then: "Celebrate tier + drive redemption",
+    path: MSG.TP4.path,
+    when: "First time they hit a tier · send on day 1, 3, or 7 after · not already sent",
+    then: "Celebrate the tier and point them at a reward",
     enabled: true,
     match(s) {
       if (!s.tier || s.sent.has("TP4") || s.tierDay == null) return false;
@@ -1163,11 +1180,11 @@ function compileRules(L) {
   if (L.bp) {
     rules.push({
       id: "TP2",
-      name: "Bonus Point Offer",
+      name: MSG.TP2.name,
       priority: 20,
-      path: "Happy",
-      when: `purchases=1 · !tier · day ∈ first+{${L.tp2a},${L.tp2b}} · TP1 sent`,
-      then: "Unlock bonus-point offer",
+      path: MSG.TP2.path,
+      when: `Still on 1 purchase · no tier yet · day ${L.tp2a} or ${L.tp2b} after first purchase · celebration already sent`,
+      then: "Unlock a bonus-points offer to pull them back",
       enabled: true,
       match(s) {
         if (s.purchases !== 1 || s.tier || s.sent.has("TP2")) return false;
@@ -1180,11 +1197,11 @@ function compileRules(L) {
   if (L.bp && L.recovery) {
     rules.push({
       id: "TP3",
-      name: "BP Offer Reminder",
+      name: MSG.TP3.name,
       priority: 30,
-      path: "Recovery",
-      when: `bp_active · !completed · day = expiry − ${L.tp3}`,
-      then: "Remind to complete BP offer",
+      path: MSG.TP3.path,
+      when: `Bonus offer active · not completed · ${L.tp3} days before it expires`,
+      then: "Remind them the bonus offer is about to end",
       enabled: true,
       match(s) {
         if (!s.bpActive || s.bpCompleted || s.sent.has("TP3")) return false;
@@ -1196,11 +1213,11 @@ function compileRules(L) {
   if (L.recovery) {
     rules.push({
       id: "TP5",
-      name: "Reward Reminder",
+      name: MSG.TP5.name,
       priority: 25,
-      path: "Recovery",
-      when: `tier · !redeemed · TP4 sent · day ≥ TP4 + ${L.tp5}`,
-      then: "Drive 1st reward redemption",
+      path: MSG.TP5.path,
+      when: `Tier unlocked · reward not used · ${L.tp5}+ days after the tier message`,
+      then: "Nudge them to use their reward",
       enabled: true,
       match(s) {
         if (!s.tier || s.redeemed || s.sent.has("TP5")) return false;
@@ -1210,11 +1227,11 @@ function compileRules(L) {
     });
     rules.push({
       id: "TP6",
-      name: "Habit Builder",
+      name: MSG.TP6.name,
       priority: 40,
-      path: "Recovery",
-      when: `purchases ∈ {1,2} · day ≥ last_purchase + ${L.tp6}`,
-      then: "Drive next purchase (Retain if ≥ 3)",
+      path: MSG.TP6.path,
+      when: `1–2 purchases only · ${L.tp6}+ days since last purchase`,
+      then: "Invite them back before the habit fades",
       enabled: true,
       match(s) {
         if (s.purchases < 1 || s.purchases >= 3 || s.sent.has("TP6")) return false;
@@ -1315,7 +1332,7 @@ function simulate(L) {
         }
       }
 
-      // Tier after enough purchases (scamp: can hit on 1st–3rd)
+      // Tier can land across early visits
       if (!m.tier && m.purchases >= 1) {
         let p = arch.tier * (m.purchases / 3);
         if (m.bpCompleted) p += 0.08;
@@ -1373,45 +1390,82 @@ function simulate(L) {
 
 /* ========== RECOMMENDATIONS ENGINE ========== */
 function scoreMetrics(m, goal) {
+  // "open" ≈ lighter inbox + still some action (fatigue proxy)
+  const openProxy = (m.second * 0.25 + m.redeem * 0.25) - m.avgComms * 6 + (m.cost < 1.2 ? 8 : 0);
   switch (goal) {
-    case "second": return m.second;
+    case "open": return openProxy;
+    case "action": return 0.55 * m.second + 0.45 * m.redeem;
+    case "return": return m.second;
     case "redeem": return m.redeem;
     case "efficiency": return m.efficiency;
     case "retain": return m.retain;
     case "balanced":
     default:
-      return 0.35 * m.second + 0.35 * m.redeem + 0.2 * m.retain - 2.5 * m.cost;
+      return 0.35 * m.second + 0.35 * m.redeem + 0.15 * m.retain - 2.2 * m.cost;
   }
 }
 
 function recipeCatalog(base) {
   const b = { ...base, n: Math.min(base.n, 400), horizon: Math.min(base.horizon, 60) };
   const recipes = [
-    { id: "scamp", name: "Scamp defaults", why: "Matches your nurture overview timings (+1, +4/+8, +7, +30).", levers: { ...b, ...SCAMP_DEFAULTS, n: b.n, horizon: b.horizon, seed: b.seed } },
-    { id: "current", name: "Your current dials", why: "Whatever is set on the Design tab right now.", levers: { ...b } },
-    { id: "early", name: "Nudge earlier", why: "Hits the bonus offer sooner — usually lifts 2nd purchase, costs a bit more.", levers: { ...b, tp1: 1, tp2a: 3, tp2b: 6, tp5: 5, tp6: 21, bp: true, recovery: true } },
-    { id: "patient", name: "Give them space", why: "Waits longer before recovery — fewer emails, may lose some converters.", levers: { ...b, tp1: 1, tp2a: 7, tp2b: 14, tp5: 10, tp6: 45, bp: true, recovery: true } },
-    { id: "no_rec", name: "Happy path only", why: "Turns off TP3/TP5/TP6 — less fatigue, fewer second chances.", levers: { ...b, recovery: false, bp: true } },
-    { id: "no_bp", name: "No bonus-point offer", why: "Drops TP2/TP3 — simpler program, often lower 2nd-purchase lift.", levers: { ...b, bp: false, recovery: true } },
-    { id: "redeem_push", name: "Push redemption hard", why: "Faster TP5 after tier celebrate — trades more emails for redeem rate.", levers: { ...b, tp5: 4, tp4: 1, bp: true, recovery: true } },
-    { id: "habit", name: "Habit-focused", why: "Earlier TP6 idle nudge to drive 2nd/3rd purchase.", levers: { ...b, tp6: 21, tp2a: 4, tp2b: 8, recovery: true, bp: true } },
+    {
+      id: "baseline",
+      name: "Balanced starter",
+      why: "Sensible default timings: celebrate quickly, offer a bonus while the visit is fresh, follow up without flooding.",
+      levers: { ...b, ...PROGRAM_DEFAULTS, n: b.n, horizon: b.horizon, seed: b.seed },
+    },
+    {
+      id: "current",
+      name: "Your current Design setup",
+      why: "Whatever timings you have set on the Design tab.",
+      levers: { ...b },
+    },
+    {
+      id: "high_intent",
+      name: "Catch high intent",
+      why: "Shorter gaps while the last visit is top-of-mind — stronger for return actions, busier inbox.",
+      levers: { ...b, tp1: 1, tp2a: 3, tp2b: 6, tp5: 5, tp6: 21, bp: true, recovery: true },
+    },
+    {
+      id: "open_friendly",
+      name: "Protect the inbox",
+      why: "Wider spacing and fewer follow-ups — better when open rate / fatigue is the constraint (common in QSR).",
+      levers: { ...b, tp1: 1, tp2a: 7, tp2b: 14, tp5: 10, tp6: 45, bp: true, recovery: true },
+    },
+    {
+      id: "moments_only",
+      name: "Celebration moments only",
+      why: "Core milestones only — no expiry reminder, reward nudge, or come-back. Cleaner inbox, fewer second chances.",
+      levers: { ...b, recovery: false, bp: true },
+    },
+    {
+      id: "no_bonus",
+      name: "Skip the bonus mechanic",
+      why: "No bonus-points offer — simpler program; often weaker at pulling a second visit.",
+      levers: { ...b, bp: false, recovery: true },
+    },
+    {
+      id: "reward_focus",
+      name: "Make the reward irresistible",
+      why: "Faster reminder after tier unlock — prioritises using the reward over adding more visits.",
+      levers: { ...b, tp5: 4, bp: true, recovery: true },
+    },
+    {
+      id: "return_focus",
+      name: "Win the next visit",
+      why: "Bonus timing + earlier come-back nudge aimed at getting them through the door again.",
+      levers: { ...b, tp6: 21, tp2a: 4, tp2b: 8, recovery: true, bp: true },
+    },
   ];
-  // Nearby tweaks around current
   const deltas = [
-    { name: "Current · TP2 +3d later", why: "Same recipe but first bonus nudge three days later.", patch: { tp2a: b.tp2a + 3, tp2b: Math.max(b.tp2b, b.tp2a + 5) } },
-    { name: "Current · TP2 −2d earlier", why: "Same recipe but first bonus nudge two days earlier.", patch: { tp2a: Math.max(2, b.tp2a - 2), tp2b: Math.max(3, b.tp2b - 2) } },
-    { name: "Current · shorter BP window", why: "14→10 day offer — urgency vs completion time.", patch: { bpExpiry: 10, tp3: 4 } },
-    { name: "Current · longer BP window", why: "More time to complete the bonus offer.", patch: { bpExpiry: 21, tp3: 5 } },
+    { name: "Bonus offer a little later", why: "Same shape as your Design setup, but the first bonus lands three days later — tests patience vs intent.", patch: { tp2a: b.tp2a + 3, tp2b: Math.max(b.tp2b, b.tp2a + 5) } },
+    { name: "Bonus offer a little sooner", why: "Same shape, first bonus two days earlier — tests whether speed beats space.", patch: { tp2a: Math.max(2, b.tp2a - 2), tp2b: Math.max(3, b.tp2b - 2) } },
+    { name: "Shorter bonus window", why: "Tighter deadline can lift urgency (and completions) for offer-led QSR.", patch: { bpExpiry: 10, tp3: 4 } },
+    { name: "Longer bonus window", why: "More time to complete — helpful if visits are irregular.", patch: { bpExpiry: 21, tp3: 5 } },
   ];
   deltas.forEach((d, i) => {
-    recipes.push({
-      id: "near_" + i,
-      name: d.name,
-      why: d.why,
-      levers: { ...b, ...d.patch },
-    });
+    recipes.push({ id: "near_" + i, name: d.name, why: d.why, levers: { ...b, ...d.patch } });
   });
-  // ensure tp2b > tp2a
   recipes.forEach((r) => {
     if (r.levers.tp2b <= r.levers.tp2a) r.levers.tp2b = r.levers.tp2a + 3;
   });
@@ -1424,11 +1478,11 @@ function explainVsBaseline(rec, baseline) {
   const dr = rec.metrics.redeem - baseline.metrics.redeem;
   const dc = rec.metrics.avgComms - baseline.metrics.avgComms;
   const bits = [];
-  if (Math.abs(d2) >= 0.4) bits.push(`${d2 >= 0 ? "+" : ""}${d2.toFixed(1)}pp 2nd purchase`);
-  if (Math.abs(dr) >= 0.4) bits.push(`${dr >= 0 ? "+" : ""}${dr.toFixed(1)}pp redeem`);
-  if (Math.abs(dc) >= 0.05) bits.push(`${dc >= 0 ? "+" : ""}${dc.toFixed(2)} comms/member`);
-  const delta = bits.length ? bits.join(" · ") : "similar to baseline";
-  return `${rec.why} Versus your current dials: ${delta}.`;
+  if (Math.abs(d2) >= 0.4) bits.push(`${d2 >= 0 ? "+" : ""}${d2.toFixed(1)}pp return visits`);
+  if (Math.abs(dr) >= 0.4) bits.push(`${dr >= 0 ? "+" : ""}${dr.toFixed(1)}pp reward use`);
+  if (Math.abs(dc) >= 0.05) bits.push(`${dc >= 0 ? "+" : ""}${dc.toFixed(2)} messages/person`);
+  const delta = bits.length ? bits.join(" · ") : "similar to your current Design setup";
+  return `${rec.why} Compared with your Design setup: ${delta}.`;
 }
 
 function runRecommendations(goal) {
@@ -1454,35 +1508,37 @@ function runRecommendations(goal) {
 function renderRecommendations(list, goal) {
   const el = $("recList");
   if (!list.length) {
-    el.innerHTML = '<div class="empty">No recipes scored.</div>';
+    el.innerHTML = '<div class="empty">Nothing ranked yet.</div>';
     return;
   }
   const goalLabel = {
+    open: "open-friendly score",
+    action: "action score",
+    return: "return-visit %",
+    redeem: "reward-use %",
+    efficiency: "action per message",
+    retain: "habit %",
     balanced: "balanced score",
-    second: "2nd purchase %",
-    redeem: "redeem %",
-    efficiency: "efficiency",
-    retain: "retain %",
   }[goal] || "score";
 
   el.innerHTML = list.slice(0, 5).map((r, i) => `
     <div class="rec-card ${i === 0 ? "top" : ""}">
       <h3>
-        ${i === 0 ? '<span class="pill warn">top pick</span>' : `<span class="pill">#${i + 1}</span>`}
+        ${i === 0 ? '<span class="pill warn">best fit</span>' : `<span class="pill">#${i + 1}</span>`}
         ${r.name}
       </h3>
       <p class="why">${r.blurb}</p>
       <div class="rec-meta">
-        <span><strong>${fmtPct(r.metrics.second)}</strong> 2nd buy</span>
-        <span><strong>${fmtPct(r.metrics.redeem)}</strong> redeem</span>
-        <span><strong>${fmtPct(r.metrics.retain)}</strong> retain</span>
-        <span><strong>${fmtNum(r.metrics.avgComms)}</strong> comms</span>
+        <span><strong>${fmtPct(r.metrics.second)}</strong> return</span>
+        <span><strong>${fmtPct(r.metrics.redeem)}</strong> reward use</span>
+        <span><strong>${fmtPct(r.metrics.retain)}</strong> habit</span>
+        <span><strong>${fmtNum(r.metrics.avgComms)}</strong> msgs/person</span>
         <span><strong>${fmtNum(r.score)}</strong> ${goalLabel}</span>
-        <span>TP2 ${r.fullLevers.tp2a}/${r.fullLevers.tp2b} · TP5+${r.fullLevers.tp5} · TP6+${r.fullLevers.tp6} · BP ${r.fullLevers.bp ? "on" : "off"} · rec ${r.fullLevers.recovery ? "on" : "off"}</span>
+        <span>Bonus days ${r.fullLevers.tp2a}/${r.fullLevers.tp2b} · reward nudge +${r.fullLevers.tp5}d · come-back +${r.fullLevers.tp6}d · bonus ${r.fullLevers.bp ? "on" : "off"} · follow-ups ${r.fullLevers.recovery ? "on" : "off"}</span>
       </div>
       <div class="btn-row" style="margin:0">
         <button type="button" class="btn btn-honey btn-apply-rec" data-idx="${i}">Load into Design</button>
-        <button type="button" class="btn btn-primary btn-lock-rec" data-idx="${i}">Save as program</button>
+        <button type="button" class="btn btn-primary btn-lock-rec" data-idx="${i}">Save as active program</button>
       </div>
     </div>
   `).join("");
@@ -1493,7 +1549,7 @@ function renderRecommendations(list, goal) {
       const r = window.__recResults[+btn.dataset.idx];
       writeLevers(r.fullLevers);
       goTab("design");
-      toast("Loaded into Design — hit Run simulation to confirm on full cohort.");
+      toast("Loaded into Design — run a test to confirm.");
     };
   });
   el.querySelectorAll(".btn-lock-rec").forEach((btn) => {
@@ -1507,29 +1563,29 @@ function renderRecommendations(list, goal) {
 function nextBestActionCopy(matched, winner, s) {
   if (!matched.length) {
     if (s.purchases >= 3 && s.redeemed) {
-      return { title: "Hold — they’re in habit land", body: "3+ purchases and already redeemed. No nurture TP needed tonight; lifecycle retain owns this." };
+      return { title: "Nothing to send — they’re already in habit", body: "Three or more visits and they’ve used a reward. Hold for broader lifecycle, not these program messages." };
     }
     if (s.tier && s.redeemed) {
-      return { title: "Wait for the next signal", body: "Reward already redeemed. Next lever is another purchase (or TP6 if they go idle)." };
+      return { title: "Wait for the next visit", body: "Reward already used. Next lever is another purchase — or a come-back nudge if they go quiet." };
     }
-    return { title: "Wait", body: "Nothing matches today. Advance the clock or wait for purchase / tier / redeem." };
+    return { title: "Wait", body: "No message matches today. Step the clock forward, or change their situation." };
   }
   const reasons = {
-    TP1: "They just earned first points — celebrate before they forget.",
-    TP2: "Still on one purchase and not tiered — a bonus offer is the best lever for a 2nd buy.",
-    TP3: "BP offer is about to expire — a reminder beats silence if they were close.",
-    TP4: "First-time tier is a milestone — celebrate and point them at redemption.",
-    TP5: "Tiered but haven’t redeemed — a nudge usually beats another purchase push.",
-    TP6: "Gone quiet after 1–2 purchases — idle habit builder is the recovery play.",
+    TP1: "They just earned points — celebrate while the visit is fresh.",
+    TP2: "Still on one visit — a bonus offer is the strongest pull for a return.",
+    TP3: "Their bonus offer is about to expire — a reminder beats silence if they were close.",
+    TP4: "They just hit a tier — celebrate and show them the reward.",
+    TP5: "Tiered but haven’t used a reward — a nudge usually beats another purchase push.",
+    TP6: "Gone quiet after 1–2 visits — invite them back before the habit fades.",
   };
-  const others = matched.filter((r) => r.id !== winner.id).map((r) => r.id);
+  const others = matched.filter((r) => r.id !== winner.id).map((r) => r.name);
   let body = reasons[winner.id] || winner.then;
-  if (others.length) body += ` Suppressed for tonight: ${others.join(", ")} (lower priority).`;
-  return { title: `Send ${winner.id} — ${winner.name}`, body };
+  if (others.length) body += ` Holding back for now: ${others.join(", ")}.`;
+  return { title: `Send: ${winner.name}`, body };
 }
 
 /* ========== STATE ========== */
-let lockedLevers = { ...SCAMP_DEFAULTS };
+let lockedLevers = { ...PROGRAM_DEFAULTS };
 let lockedRules = compileRules(lockedLevers);
 let lastSim = null;
 let snapA = null;
@@ -1581,16 +1637,16 @@ function renderOutcomes(metrics, elPrefix) {
 function metricsBlock(m, L) {
   return `
     <p style="font-size:0.78rem;color:var(--faint);margin-bottom:10px">
-      TP1+${L.tp1} · TP2 ${L.tp2a}/${L.tp2b} · TP5+${L.tp5} · TP6+${L.tp6} ·
-      BP ${L.bp ? "on" : "off"} · Recovery ${L.recovery ? "on" : "off"}
+      Celebration +${L.tp1}d · Bonus ${L.tp2a}/${L.tp2b}d · Reward nudge +${L.tp5}d · Come-back +${L.tp6}d ·
+      Bonus ${L.bp ? "on" : "off"} · Follow-ups ${L.recovery ? "on" : "off"}
     </p>
     <div class="stats" style="grid-template-columns:1fr 1fr">
-      <div class="stat"><div class="k">2nd purchase</div><div class="v">${fmtPct(m.second)}</div></div>
+      <div class="stat"><div class="k">Return visit</div><div class="v">${fmtPct(m.second)}</div></div>
       <div class="stat blush"><div class="k">Tier</div><div class="v">${fmtPct(m.tier)}</div></div>
-      <div class="stat moss"><div class="k">Redeemed</div><div class="v">${fmtPct(m.redeem)}</div></div>
-      <div class="stat"><div class="k">Comms/member</div><div class="v">${fmtNum(m.avgComms)}</div></div>
-      <div class="stat"><div class="k">Cost score</div><div class="v">${fmtNum(m.cost)}</div></div>
-      <div class="stat moss"><div class="k">Efficiency</div><div class="v">${fmtNum(m.efficiency)}</div></div>
+      <div class="stat moss"><div class="k">Reward use</div><div class="v">${fmtPct(m.redeem)}</div></div>
+      <div class="stat"><div class="k">Msgs / person</div><div class="v">${fmtNum(m.avgComms)}</div></div>
+      <div class="stat"><div class="k">Inbox load</div><div class="v">${fmtNum(m.cost)}</div></div>
+      <div class="stat moss"><div class="k">Action / msg</div><div class="v">${fmtNum(m.efficiency)}</div></div>
     </div>`;
 }
 
@@ -1612,7 +1668,7 @@ function lockProgram(L, label) {
   $("lockedPill").textContent = "using your saved timings";
   member = freshMember();
   evaluateRuntime(false);
-  toast("Saved. Open “Try one customer” to walk a shopper day by day.");
+  toast("Saved. Open “Preview one person” to walk through day by day.");
 }
 
 function goTab(name) {
@@ -1628,8 +1684,7 @@ function renderExport() {
   const body = $("rulesBody");
   body.innerHTML = lockedRules.map((r) =>
     `<tr>
-      <td class="rid">${r.id}</td>
-      <td>${r.name}</td>
+      <td class="rid">${r.name}</td>
       <td>${r.priority}</td>
       <td>${r.when}</td>
       <td>${r.then}</td>
@@ -1639,10 +1694,13 @@ function renderExport() {
 
   const payload = {
     name: "Loyalty Studio program",
+    vertical: "qsr",
     lockedAt: new Date().toISOString(),
-    levers: lockedLevers,
-    rules: lockedRules.map(({ match, enabled, ...rest }) => rest),
-    note: "State-triggered nurture rules. Not a linear journey.",
+    timings: lockedLevers,
+    messages: lockedRules.map(({ match, enabled, id, ...rest }) => ({
+      code: id,
+      ...rest,
+    })),
   };
   $("exportJson").value = JSON.stringify(payload, null, 2);
 }
@@ -1680,18 +1738,18 @@ function evaluateRuntime(autoSend) {
     list.innerHTML = '<div class="empty">No rule matches this state on this day.</div>';
     $("evalBadge").textContent = "no match";
   } else {
-    list.innerHTML = matched.map((r, i) => {
+    list.innerHTML = matched.map((r) => {
       const win = winner && r.id === winner.id;
       return `<div class="fire ${win ? "winner" : "suppressed"}">
         <div class="fire-top">
-          <strong>${r.id} — ${r.name}</strong>
-          <span class="pill ${win ? "warn" : ""}">${win ? "would send" : "priority loss"}</span>
-          <span class="pill">p${r.priority}</span>
+          <strong>${r.name}</strong>
+          <span class="pill ${win ? "warn" : ""}">${win ? "send this" : "hold"}</span>
+          <span class="pill">${r.path}</span>
         </div>
         <p>${r.then}</p>
       </div>`;
     }).join("");
-    $("evalBadge").textContent = matched.length + " candidate(s)";
+    $("evalBadge").textContent = matched.length + " option(s)";
   }
 
   const nba = nextBestActionCopy(matched, winner, member);
@@ -1706,7 +1764,7 @@ function evaluateRuntime(autoSend) {
     }
     if (winner.id === "TP4") member.tp4Day = member.day;
     member.log.unshift({ day: member.day, type: "send", id: winner.id, msg: winner.then });
-    $("evalBadge").textContent = "sent " + winner.id;
+    $("evalBadge").textContent = "sent · " + winner.name;
     evaluateRuntime(false);
     return;
   }
@@ -1760,32 +1818,32 @@ if (localStorage.getItem("ls_guide_hidden") === "1") {
 }
 
 $("btnGuideRun").onclick = () => {
-  writeLevers(SCAMP_DEFAULTS);
+  writeLevers(PROGRAM_DEFAULTS);
   goTab("design");
   $("btnRun").click();
-  toast("Sim ran on scamp defaults — check the scoreboard below.");
+  toast("Test ran on default timings — check Results below.");
 };
 
 $("btnGuideRuntime").onclick = () => {
   lockProgram(readLevers(), "guide");
   goTab("runtime");
-  toast("Click “+1 day” a few times — watch which email lights up.");
+  toast("Click “+1 day” a few times — watch what we’d send.");
 };
 
 $("btnRecommend").onclick = () => {
   const goal = $("recGoal").value;
-  $("recStatus").textContent = "searching…";
-  $("recList").innerHTML = '<div class="empty">Trying ~12 timing recipes…</div>';
+  $("recStatus").textContent = "scoring…";
+  $("recList").innerHTML = '<div class="empty">Comparing program setups…</div>';
   setTimeout(() => {
     const list = runRecommendations(goal);
     renderRecommendations(list, goal);
-    $("recStatus").textContent = `top ${Math.min(5, list.length)} · goal: ${goal}`;
-    toast("Recommendations ready — top pick is highlighted.");
+    $("recStatus").textContent = `top ${Math.min(5, list.length)}`;
+    toast("Recommendations ready.");
   }, 40);
 };
 
 $("btnRecFromDesign").onclick = () => {
-  toast("Baseline is whatever is on Design — hit Find recommendations.");
+  toast("Baseline is your Design timings — hit Find recommendations.");
 };
 
 $("btnCompare").onclick = () => {
@@ -1799,8 +1857,8 @@ $("btnCompare").onclick = () => {
   const aBetter = ra.metrics.efficiency >= rb.metrics.efficiency;
   $("colA").className = "compare-col" + (aBetter ? " winner-col" : "");
   $("colB").className = "compare-col" + (!aBetter ? " winner-col" : "");
-  $("colA").innerHTML = `<h3>Variant A ${aBetter ? "· lean here" : ""}</h3>` + metricsBlock(ra.metrics, snapA);
-  $("colB").innerHTML = `<h3>Variant B ${!aBetter ? "· lean here" : ""}</h3>` + metricsBlock(rb.metrics, snapB);
+  $("colA").innerHTML = `<h3>Option A ${aBetter ? "· stronger on efficiency" : ""}</h3>` + metricsBlock(ra.metrics, snapA);
+  $("colB").innerHTML = `<h3>Option B ${!aBetter ? "· stronger on efficiency" : ""}</h3>` + metricsBlock(rb.metrics, snapB);
   $("btnUseA").disabled = false;
   $("btnUseB").disabled = false;
 };
@@ -1809,7 +1867,7 @@ $("btnCompare").onclick = () => {
   $("lev_" + k).addEventListener("input", syncOutputs);
 });
 
-$("btnResetLevers").onclick = () => writeLevers(SCAMP_DEFAULTS);
+$("btnResetLevers").onclick = () => writeLevers(PROGRAM_DEFAULTS);
 
 $("btnRun").onclick = () => {
   const L = readLevers();
@@ -1817,7 +1875,7 @@ $("btnRun").onclick = () => {
   setTimeout(() => {
     lastSim = simulate(L);
     renderOutcomes(lastSim.metrics);
-    $("simStatus").textContent = `done · ${L.n} shoppers · ${L.horizon} days`;
+    $("simStatus").textContent = `done · ${L.n} people · ${L.horizon} days`;
   }, 30);
 };
 
