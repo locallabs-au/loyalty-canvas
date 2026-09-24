@@ -3,118 +3,325 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Loyalty State Engine — Working Model</title>
+  <title>Loyalty Studio — design by simulation</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --ink: #141612;
-      --ink-2: #1c1f1a;
-      --panel: #232821;
-      --panel-2: #2a2f27;
-      --line: #3a4036;
-      --line-soft: #2e332c;
-      --text: #e8e6df;
-      --muted: #9a9e93;
-      --faint: #6b7066;
-      --gold: #d4a84b;
-      --gold-dim: #8a6d2e;
-      --gold-wash: rgba(212, 168, 75, 0.12);
-      --sage: #7a9e78;
-      --sage-wash: rgba(122, 158, 120, 0.14);
-      --clay: #c47a5a;
-      --clay-wash: rgba(196, 122, 90, 0.14);
-      --sky: #7a9bb8;
-      --font: "Sora", system-ui, sans-serif;
-      --serif: "Source Serif 4", Georgia, serif;
-      --radius: 10px;
+      --bg: #1a1412;
+      --bg-2: #221b18;
+      --panel: #2a211d;
+      --panel-2: #332824;
+      --line: #4a3b34;
+      --line-soft: #3a2e29;
+      --text: #f3ebe4;
+      --muted: #b5a59a;
+      --faint: #7d6e65;
+      --blush: #e8a598;
+      --blush-dim: #c4786a;
+      --blush-wash: rgba(232, 165, 152, 0.14);
+      --honey: #e0b15b;
+      --honey-wash: rgba(224, 177, 91, 0.14);
+      --moss: #8faf8a;
+      --moss-wash: rgba(143, 175, 138, 0.14);
+      --clay: #d0896a;
+      --font: "Figtree", system-ui, sans-serif;
+      --display: "Fraunces", Georgia, serif;
+      --radius: 14px;
+      --radius-sm: 10px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html {
-      -webkit-text-size-adjust: 100%;
-      text-size-adjust: 100%;
-    }
+    html { -webkit-text-size-adjust: 100%; }
 
     body {
       font-family: var(--font);
-      background: var(--ink);
+      background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       line-height: 1.45;
       overflow-x: hidden;
       background-image:
-        radial-gradient(ellipse 80% 50% at 10% -10%, rgba(212, 168, 75, 0.07), transparent 50%),
-        radial-gradient(ellipse 60% 40% at 100% 0%, rgba(122, 158, 120, 0.06), transparent 45%),
-        repeating-linear-gradient(
-          0deg,
-          transparent,
-          transparent 2px,
-          rgba(255, 255, 255, 0.01) 2px,
-          rgba(255, 255, 255, 0.01) 3px
-        );
+        radial-gradient(ellipse 70% 45% at 15% -5%, rgba(232, 165, 152, 0.11), transparent 55%),
+        radial-gradient(ellipse 50% 40% at 95% 10%, rgba(224, 177, 91, 0.07), transparent 50%),
+        radial-gradient(ellipse 40% 30% at 50% 100%, rgba(143, 175, 138, 0.05), transparent 45%);
     }
 
     .shell {
-      max-width: 1180px;
+      max-width: 1120px;
       margin: 0 auto;
-      padding: 28px 20px 64px;
+      padding: 32px 20px 72px;
       width: 100%;
     }
 
-    header.hero {
-      margin-bottom: 28px;
-      animation: rise 0.5s ease-out;
-    }
-
-    header.hero h1 {
-      font-family: var(--serif);
-      font-size: clamp(1.75rem, 3.5vw, 2.35rem);
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      color: var(--gold);
-      margin-bottom: 8px;
-    }
-
-    header.hero p {
-      color: var(--muted);
-      max-width: 54ch;
-      font-size: 0.95rem;
-    }
-
-    .day-bar {
+    /* —— Header —— */
+    .brand {
       display: flex;
       flex-wrap: wrap;
-      align-items: center;
-      gap: 12px 20px;
-      padding: 14px 18px;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      margin-bottom: 20px;
-      animation: rise 0.55s ease-out;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 28px;
+      animation: rise 0.5s ease;
     }
 
-    .day-bar .clock {
-      font-family: var(--serif);
-      font-size: 1.35rem;
+    .brand h1 {
+      font-family: var(--display);
+      font-size: clamp(2rem, 4.5vw, 2.75rem);
       font-weight: 600;
-      min-width: 7ch;
+      letter-spacing: -0.03em;
+      color: var(--blush);
+      line-height: 1.1;
     }
 
-    .day-bar .clock span {
-      color: var(--gold);
+    .brand h1 em {
+      font-style: italic;
+      color: var(--honey);
+      font-weight: 500;
     }
 
+    .brand .tag {
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 36ch;
+      margin-top: 8px;
+    }
+
+    .brand-meta {
+      text-align: right;
+      font-size: 0.75rem;
+      color: var(--faint);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .brand-meta strong {
+      display: block;
+      color: var(--honey);
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 0;
+      text-transform: none;
+      margin-bottom: 2px;
+    }
+
+    /* —— Tabs —— */
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 22px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 2px;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+
+    .tab {
+      font-family: var(--font);
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 11px 18px;
+      min-height: 44px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--faint);
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .tab:hover { color: var(--muted); background: var(--bg-2); }
+    .tab.on {
+      color: var(--bg);
+      background: var(--blush);
+      border-color: var(--blush);
+    }
+
+    .view { display: none; }
+    .view.on { display: block; animation: rise 0.35s ease; }
+
+    /* —— Surfaces —— */
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .panel-h {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .panel-h h2 {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--faint);
+    }
+
+    .panel-b { padding: 18px; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .stat {
+      padding: 16px;
+      background: var(--bg-2);
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius-sm);
+      min-width: 0;
+    }
+
+    .stat .k {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--faint);
+      margin-bottom: 6px;
+    }
+
+    .stat .v {
+      font-family: var(--display);
+      font-size: 1.65rem;
+      font-weight: 600;
+      color: var(--honey);
+      letter-spacing: -0.02em;
+    }
+
+    .stat .s {
+      font-size: 0.72rem;
+      color: var(--faint);
+      margin-top: 4px;
+    }
+
+    .stat.blush .v { color: var(--blush); }
+    .stat.moss .v { color: var(--moss); }
+
+    /* —— Forms —— */
+    label.field {
+      display: block;
+      margin-bottom: 14px;
+    }
+
+    label.field span.l {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--faint);
+      margin-bottom: 6px;
+    }
+
+    label.field .hint {
+      font-size: 0.72rem;
+      color: var(--faint);
+      margin-top: 4px;
+      text-transform: none;
+      letter-spacing: 0;
+      font-weight: 400;
+    }
+
+    input[type="number"],
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      font-family: var(--font);
+      font-size: 0.9rem;
+      padding: 10px 12px;
+      min-height: 42px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--bg-2);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--blush-dim);
+    }
+
+    textarea {
+      min-height: 160px;
+      resize: vertical;
+      font-family: ui-monospace, "Cascadia Code", monospace;
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--blush);
+    }
+
+    .range-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .range-row output {
+      font-family: var(--display);
+      font-weight: 600;
+      color: var(--honey);
+      min-width: 3ch;
+      text-align: right;
+    }
+
+    .check {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--bg-2);
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      min-height: 44px;
+      user-select: none;
+    }
+
+    .check input { accent-color: var(--blush); width: 16px; height: 16px; }
+
+    /* —— Buttons —— */
     .btn {
       font-family: var(--font);
-      font-size: 0.8rem;
-      font-weight: 500;
-      padding: 8px 14px;
-      min-height: 40px;
-      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 10px 16px;
+      min-height: 42px;
+      border-radius: 999px;
       border: 1px solid var(--line);
       background: var(--panel-2);
       color: var(--text);
@@ -123,34 +330,24 @@
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
     }
-
-    .btn:hover:not(:disabled) {
-      background: var(--line-soft);
-      border-color: var(--faint);
-    }
-
+    .btn:hover:not(:disabled) { background: var(--line-soft); }
     .btn:active:not(:disabled) { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    .btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
+    .btn-primary {
+      background: var(--blush);
+      border-color: var(--blush);
+      color: #2a1512;
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: #f0b5a8;
+      border-color: #f0b5a8;
     }
 
-    .btn-gold {
-      background: var(--gold-wash);
-      border-color: var(--gold-dim);
-      color: var(--gold);
-    }
-
-    .btn-gold:hover:not(:disabled) {
-      background: rgba(212, 168, 75, 0.22);
-      border-color: var(--gold);
-    }
-
-    .btn-sage {
-      background: var(--sage-wash);
-      border-color: rgba(122, 158, 120, 0.35);
-      color: var(--sage);
+    .btn-honey {
+      background: var(--honey-wash);
+      border-color: rgba(224, 177, 91, 0.45);
+      color: var(--honey);
     }
 
     .btn-ghost {
@@ -158,88 +355,95 @@
       color: var(--muted);
     }
 
-    .layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .panel {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      overflow: hidden;
-      animation: rise 0.6s ease-out;
-    }
-
-    .panel-h {
+    .btn-row {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    /* —— Misc —— */
+    .callout {
       padding: 14px 16px;
-      border-bottom: 1px solid var(--line-soft);
-    }
-
-    .panel-h h2 {
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      border-radius: var(--radius-sm);
+      background: var(--blush-wash);
+      border-left: 3px solid var(--blush);
+      font-size: 0.85rem;
       color: var(--muted);
+      margin-top: 14px;
     }
+    .callout strong { color: var(--text); }
 
-    .panel-b { padding: 16px; }
+    .pill {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--panel-2);
+      color: var(--muted);
+      border: 1px solid var(--line);
+    }
+    .pill.on { background: var(--moss-wash); color: var(--moss); border-color: rgba(143,175,138,0.4); }
+    .pill.warn { background: var(--blush-wash); color: var(--blush); border-color: rgba(232,165,152,0.4); }
+
+    .fire {
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line-soft);
+      background: var(--bg-2);
+      margin-bottom: 8px;
+      animation: pop 0.25s ease;
+    }
+    .fire.winner {
+      border-color: rgba(232, 165, 152, 0.5);
+      background: var(--blush-wash);
+    }
+    .fire.suppressed { opacity: 0.55; }
+    .fire-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .fire p { font-size: 0.8rem; color: var(--muted); }
 
     .dims {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 10px;
     }
-
     .dim {
       padding: 12px;
-      background: var(--ink-2);
+      background: var(--bg-2);
       border: 1px solid var(--line-soft);
-      border-radius: 8px;
-      transition: border-color 0.2s, background 0.2s;
+      border-radius: var(--radius-sm);
+      min-width: 0;
     }
-
     .dim.active {
-      border-color: var(--gold-dim);
-      background: var(--gold-wash);
+      border-color: rgba(232, 165, 152, 0.45);
+      background: var(--blush-wash);
     }
-
     .dim label {
       display: block;
-      font-size: 0.68rem;
-      font-weight: 600;
+      font-size: 0.62rem;
+      font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: var(--faint);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       overflow-wrap: anywhere;
-      line-height: 1.25;
     }
-
     .dim .val {
-      font-family: var(--serif);
-      font-size: 1.4rem;
+      font-family: var(--display);
+      font-size: 1.35rem;
       font-weight: 600;
+      color: var(--honey);
     }
-
-    .dim .hint {
-      font-size: 0.72rem;
-      color: var(--faint);
-      margin-top: 4px;
-    }
-
-    .toggle-row {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 12px;
-    }
+    .dim .hint { font-size: 0.7rem; color: var(--faint); margin-top: 2px; }
 
     .toggle {
       display: flex;
@@ -248,170 +452,49 @@
       gap: 12px;
       padding: 10px 12px;
       min-height: 44px;
-      background: var(--ink-2);
+      background: var(--bg-2);
       border: 1px solid var(--line-soft);
       border-radius: 8px;
       cursor: pointer;
+      margin-top: 8px;
       user-select: none;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
     }
-
-    .toggle span { font-size: 0.85rem; }
-
     .switch {
-      width: 36px;
-      height: 20px;
-      border-radius: 10px;
-      background: var(--line);
-      position: relative;
-      flex-shrink: 0;
+      width: 36px; height: 20px; border-radius: 10px;
+      background: var(--line); position: relative; flex-shrink: 0;
       transition: background 0.2s;
     }
-
     .switch::after {
       content: "";
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: var(--text);
-      transition: transform 0.2s;
+      position: absolute; top: 2px; left: 2px;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--text); transition: transform 0.2s;
     }
+    .toggle.on .switch { background: var(--blush-dim); }
+    .toggle.on .switch::after { transform: translateX(16px); background: var(--blush); }
 
-    .toggle.on .switch { background: var(--gold-dim); }
-    .toggle.on .switch::after { transform: translateX(16px); background: var(--gold); }
-
-    .events {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 14px;
-      padding-top: 14px;
-      border-top: 1px solid var(--line-soft);
-    }
-
-    .events .label {
-      width: 100%;
-      font-size: 0.68rem;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--faint);
-      margin-bottom: 2px;
-    }
-
-    .fire-list { display: flex; flex-direction: column; gap: 8px; min-height: 120px; }
-
-    .fire {
-      padding: 12px 14px;
-      border-radius: 8px;
-      border: 1px solid var(--line-soft);
-      background: var(--ink-2);
-      animation: pop 0.25s ease-out;
-    }
-
-    .fire.winner {
-      border-color: var(--gold-dim);
-      background: var(--gold-wash);
-    }
-
-    .fire.suppressed {
-      opacity: 0.55;
-    }
-
-    .fire.blocked {
-      border-color: rgba(196, 122, 90, 0.4);
-      background: var(--clay-wash);
-    }
-
-    .fire-top {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 4px;
-    }
-
-    .fire-top strong { font-size: 0.9rem; }
-
-    .pill {
-      font-size: 0.65rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      padding: 2px 7px;
-      border-radius: 4px;
-      background: var(--panel-2);
-      color: var(--muted);
-      border: 1px solid var(--line);
-    }
-
-    .pill.send { background: var(--gold-wash); color: var(--gold); border-color: var(--gold-dim); }
-    .pill.skip { color: var(--clay); border-color: rgba(196, 122, 90, 0.4); }
-    .pill.happy { color: var(--sage); border-color: rgba(122, 158, 120, 0.4); }
-    .pill.recovery { color: var(--sky); border-color: rgba(122, 155, 184, 0.4); }
-
-    .fire p { font-size: 0.8rem; color: var(--muted); }
-
-    .empty {
-      color: var(--faint);
-      font-size: 0.85rem;
-      padding: 24px 8px;
-      text-align: center;
-    }
-
-    .full { grid-column: 1 / -1; }
-
-    .log {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      max-height: 320px;
-      overflow-y: auto;
-    }
-
+    .log { list-style: none; max-height: 280px; overflow-y: auto; }
     .log li {
       display: grid;
-      grid-template-columns: 52px 64px minmax(0, 1fr);
-      gap: 10px;
-      padding: 10px 4px;
+      grid-template-columns: 48px 56px minmax(0, 1fr);
+      gap: 8px;
+      padding: 8px 0;
       border-bottom: 1px solid var(--line-soft);
-      font-size: 0.82rem;
-      animation: pop 0.3s ease-out;
+      font-size: 0.8rem;
     }
+    .log .d { color: var(--honey); font-weight: 700; }
+    .log .id { color: var(--moss); font-weight: 600; }
+    .log .msg { color: var(--muted); overflow-wrap: anywhere; }
+    .log .event .id { color: var(--blush); }
 
-    .log li:last-child { border-bottom: none; }
-
-    .log .d { color: var(--gold); font-weight: 600; font-variant-numeric: tabular-nums; }
-    .log .id { color: var(--sage); font-weight: 600; }
-    .log .msg {
-      color: var(--muted);
-      min-width: 0;
-      overflow-wrap: anywhere;
-      word-break: break-word;
-    }
-    .log .event .id { color: var(--sky); }
-    .log .suppress .id { color: var(--clay); }
-
-    .table-scroll {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      margin: 0 -4px;
-      padding: 0 4px;
-    }
-
-    .rules-table {
+    .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table.rules {
       width: 100%;
-      min-width: 640px;
+      min-width: 620px;
       border-collapse: collapse;
       font-size: 0.78rem;
     }
-
-    .rules-table th {
+    table.rules th {
       text-align: left;
       font-size: 0.65rem;
       letter-spacing: 0.06em;
@@ -419,803 +502,958 @@
       color: var(--faint);
       padding: 0 10px 10px 0;
       border-bottom: 1px solid var(--line);
-      font-weight: 600;
     }
-
-    .rules-table td {
-      padding: 12px 10px 12px 0;
+    table.rules td {
+      padding: 11px 10px 11px 0;
       border-bottom: 1px solid var(--line-soft);
       vertical-align: top;
       color: var(--muted);
     }
+    table.rules .rid { color: var(--blush); font-weight: 700; }
 
-    .rules-table tr.live td { color: var(--text); background: var(--gold-wash); }
-    .rules-table tr.live td:first-child { box-shadow: inset 3px 0 0 var(--gold); }
-
-    .rules-table .rid {
-      font-weight: 600;
-      color: var(--gold);
-      white-space: nowrap;
-    }
-
-    .lifecycle {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .lc {
-      display: grid;
-      grid-template-columns: 1fr auto auto;
-      gap: 10px;
-      align-items: center;
-      padding: 10px 12px;
-      background: var(--ink-2);
+    .compare-col {
+      padding: 14px;
+      background: var(--bg-2);
+      border-radius: var(--radius-sm);
       border: 1px solid var(--line-soft);
-      border-radius: 8px;
-      font-size: 0.82rem;
+    }
+    .compare-col h3 {
+      font-family: var(--display);
+      font-size: 1.15rem;
+      color: var(--blush);
+      margin-bottom: 10px;
+    }
+    .compare-col.winner-col {
+      border-color: rgba(143, 175, 138, 0.5);
+      background: var(--moss-wash);
     }
 
-    .lc.active-block {
-      border-color: rgba(196, 122, 90, 0.45);
-      background: var(--clay-wash);
-    }
-
-    .lc .name { font-weight: 500; }
-    .lc .why { grid-column: 1 / -1; font-size: 0.72rem; color: var(--faint); }
-
-    .tabs {
-      display: flex;
-      gap: 4px;
-      margin-bottom: 16px;
-      border-bottom: 1px solid var(--line);
-      animation: rise 0.5s ease-out;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-
-    .tabs::-webkit-scrollbar { display: none; }
-
-    .tab {
-      font-family: var(--font);
-      font-size: 0.82rem;
-      font-weight: 500;
-      padding: 10px 16px;
-      min-height: 44px;
-      background: none;
-      border: none;
-      border-bottom: 2px solid transparent;
+    .empty {
+      text-align: center;
       color: var(--faint);
-      cursor: pointer;
-      margin-bottom: -1px;
-      transition: color 0.15s, border-color 0.15s;
-      white-space: nowrap;
-      flex-shrink: 0;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
+      padding: 28px 12px;
+      font-size: 0.9rem;
     }
 
-    .tab:hover { color: var(--muted); }
-    .tab.on { color: var(--gold); border-bottom-color: var(--gold); }
+    .day-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      background: var(--panel);
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+    }
+    .day-bar .clock {
+      font-family: var(--display);
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+    .day-bar .clock span { color: var(--honey); }
 
-    .view { display: none; }
-    .view.on { display: block; animation: rise 0.35s ease-out; }
-
-    .note {
-      margin-top: 16px;
-      padding: 12px 14px;
-      border-radius: 8px;
-      background: var(--ink-2);
-      border-left: 3px solid var(--gold);
-      font-size: 0.8rem;
+    .assumptions {
+      font-size: 0.78rem;
       color: var(--muted);
+      line-height: 1.55;
     }
-
-    .note strong { color: var(--text); }
+    .assumptions code {
+      font-size: 0.72rem;
+      color: var(--honey);
+      background: var(--honey-wash);
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
 
     @keyframes rise {
       from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
     @keyframes pop {
       from { opacity: 0; transform: translateY(4px) scale(0.98); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+      to { opacity: 1; transform: none; }
     }
 
-    /* —— Mobile / narrow viewports —— */
     @media (max-width: 900px) {
-      .layout { grid-template-columns: 1fr; }
-      .full { grid-column: 1; }
+      .grid-2, .stats, .grid-3 { grid-template-columns: 1fr 1fr; }
     }
 
     @media (max-width: 640px) {
-      .shell {
-        padding: 16px 14px 48px;
-      }
-
-      header.hero {
-        margin-bottom: 18px;
-      }
-
-      header.hero h1 {
-        font-size: 1.55rem;
-      }
-
-      header.hero p {
-        font-size: 0.88rem;
-      }
-
-      .day-bar {
-        padding: 12px 12px;
-        gap: 8px;
-      }
-
-      .day-bar .clock {
-        width: 100%;
-        font-size: 1.2rem;
-        min-width: 0;
-      }
-
-      .day-bar .btn,
-      .events .btn {
-        flex: 1 1 100%;
-        width: 100%;
-        min-width: 0;
-        text-align: center;
-        white-space: normal;
-        line-height: 1.3;
-        padding: 12px 12px;
-      }
-
-      .dims {
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-      }
-
-      .dim {
-        padding: 10px;
-        min-width: 0;
-      }
-
-      .dim .val {
-        font-size: 1.2rem;
-      }
-
-      .dim label {
-        font-size: 0.62rem;
-        letter-spacing: 0.03em;
-      }
-
-      .dim .hint {
-        overflow-wrap: anywhere;
-        line-height: 1.25;
-      }
-
-      .events {
-        gap: 8px;
-      }
-
-      .panel-b { padding: 12px; }
-
-      .fire-top strong {
-        font-size: 0.85rem;
-      }
-
-      .log li {
-        grid-template-columns: 40px 52px minmax(0, 1fr);
-        gap: 8px;
-        font-size: 0.78rem;
-      }
-
-      .lc {
-        grid-template-columns: 1fr;
-        gap: 6px;
-      }
-
-      .lc .name {
-        grid-column: 1;
-        overflow-wrap: anywhere;
-      }
-
-      .lc .why {
-        grid-column: 1;
-        margin-top: 2px;
-      }
-
-      .tabs {
-        margin-left: -14px;
-        margin-right: -14px;
-        padding: 0 14px;
-      }
-
-      .tab {
-        padding: 10px 12px;
-        font-size: 0.78rem;
-      }
-
-      .note {
-        font-size: 0.76rem;
-      }
+      .shell { padding: 20px 14px 56px; }
+      .brand-meta { text-align: left; width: 100%; }
+      .grid-2, .stats, .grid-3 { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .day-bar .btn { flex: 1 1 100%; width: 100%; }
+      .log li { grid-template-columns: 1fr; gap: 2px; }
+      .tabs { margin-left: -14px; margin-right: -14px; padding: 0 14px; }
     }
 
     @media (max-width: 380px) {
-      .dims {
-        grid-template-columns: 1fr;
-      }
-
-      .log li {
-        grid-template-columns: 1fr;
-        gap: 2px;
-      }
-
-      .log .d,
-      .log .id {
-        display: inline;
-      }
-
-      .log .id::before {
-        content: " · ";
-        color: var(--faint);
-      }
+      .stats, .dims { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
   <div class="shell">
-    <header class="hero">
-      <h1>Loyalty State Engine</h1>
-      <p>
-        Working model — not a journey map. Flip customer state or simulate day-by-day.
-        Rules fire when criteria match. Priority picks the send.
-      </p>
+    <header class="brand">
+      <div>
+        <h1>Loyalty <em>Studio</em></h1>
+        <p class="tag">Simulate outcomes. Lock the rules. Ship the program — not a journey map.</p>
+      </div>
+      <div class="brand-meta">
+        <strong>Scrappy design lab</strong>
+        Directional · assumption-led · exportable
+      </div>
     </header>
 
-    <div class="day-bar">
-      <div class="clock">Day <span id="dayLabel">0</span></div>
-      <button class="btn btn-gold" id="btnAdvance" type="button">+1 day &amp; evaluate</button>
-      <button class="btn" id="btnAdvance7" type="button">+7 days</button>
-      <button class="btn btn-ghost" id="btnReset" type="button">Reset member</button>
-    </div>
+    <nav class="tabs" role="tablist">
+      <button type="button" class="tab on" data-view="design">Design</button>
+      <button type="button" class="tab" data-view="compare">Compare</button>
+      <button type="button" class="tab" data-view="runtime">Runtime</button>
+      <button type="button" class="tab" data-view="export">Export</button>
+    </nav>
 
-    <div class="tabs" role="tablist">
-      <button class="tab on" data-view="sim" type="button">Simulator</button>
-      <button class="tab" data-view="rules" type="button">Rules catalog</button>
-      <button class="tab" data-view="lifecycle" type="button">Lifecycle impact</button>
-    </div>
-
-    <!-- SIMULATOR -->
-    <div class="view on" id="view-sim">
-      <div class="layout">
+    <!-- ========== DESIGN ========== -->
+    <div class="view on" id="view-design">
+      <div class="grid-2">
         <section class="panel">
-          <div class="panel-h"><h2>Member state</h2></div>
+          <div class="panel-h"><h2>Levers</h2><span class="pill warn">from scamps</span></div>
           <div class="panel-b">
-            <div class="dims">
-              <div class="dim" id="dimPurchases">
-                <label>Purchases</label>
-                <div class="val" id="valPurchases">0</div>
-                <div class="hint">count</div>
+            <label class="field">
+              <span class="l">TP1 delay (days after 1st purchase)</span>
+              <div class="range-row">
+                <input type="range" id="lev_tp1" min="0" max="5" value="1" />
+                <output id="out_tp1">1</output>
               </div>
-              <div class="dim" id="dimDays">
-                <label>Days since action</label>
-                <div class="val" id="valDays">—</div>
-                <div class="hint" id="hintDays">no clock yet</div>
+              <div class="hint">Scamp: +1 day · Progress Recognition</div>
+            </label>
+            <label class="field">
+              <span class="l">TP2 first nudge (days)</span>
+              <div class="range-row">
+                <input type="range" id="lev_tp2a" min="2" max="14" value="4" />
+                <output id="out_tp2a">4</output>
               </div>
-              <div class="dim" id="dimTier">
-                <label>Tier achieved</label>
-                <div class="val" id="valTier">No</div>
-                <div class="hint">binary</div>
+              <div class="hint">Scamp: +4 or +8 · Bonus Point Offer</div>
+            </label>
+            <label class="field">
+              <span class="l">TP2 second nudge (days)</span>
+              <div class="range-row">
+                <input type="range" id="lev_tp2b" min="3" max="21" value="8" />
+                <output id="out_tp2b">8</output>
               </div>
-              <div class="dim" id="dimRedeemed">
-                <label>1st redeemed</label>
-                <div class="val" id="valRedeemed">No</div>
-                <div class="hint">binary</div>
+            </label>
+            <label class="field">
+              <span class="l">BP offer length (days)</span>
+              <div class="range-row">
+                <input type="range" id="lev_bpExpiry" min="7" max="28" value="14" />
+                <output id="out_bpExpiry">14</output>
               </div>
-            </div>
+            </label>
+            <label class="field">
+              <span class="l">TP3 reminder (days before BP expiry)</span>
+              <div class="range-row">
+                <input type="range" id="lev_tp3" min="1" max="10" value="5" />
+                <output id="out_tp3">5</output>
+              </div>
+              <div class="hint">Scamp: 5 days before expiry</div>
+            </label>
+            <label class="field">
+              <span class="l">TP5 after TP4 (days)</span>
+              <div class="range-row">
+                <input type="range" id="lev_tp5" min="3" max="21" value="7" />
+                <output id="out_tp5">7</output>
+              </div>
+              <div class="hint">Scamp: +7 days · Reward Reminder</div>
+            </label>
+            <label class="field">
+              <span class="l">TP6 habit idle (days)</span>
+              <div class="range-row">
+                <input type="range" id="lev_tp6" min="14" max="60" value="30" />
+                <output id="out_tp6">30</output>
+              </div>
+              <div class="hint">Scamp: +30 days · Habit Builder</div>
+            </label>
 
-            <div class="toggle-row">
-              <div class="toggle" id="togBp" role="switch" aria-checked="false">
-                <span>BP offer active</span>
-                <div class="switch"></div>
-              </div>
-              <div class="toggle" id="togBpDone" role="switch" aria-checked="false">
-                <span>BP offer completed</span>
-                <div class="switch"></div>
-              </div>
-            </div>
-
-            <div class="events">
-              <div class="label">Events (mutate state, then re-evaluate)</div>
-              <button class="btn btn-sage" id="btnPurchase" type="button">Record purchase</button>
-              <button class="btn" id="btnTier" type="button">Achieve tier (first time)</button>
-              <button class="btn" id="btnRedeem" type="button">Redeem 1st reward</button>
-              <button class="btn" id="btnActivateBp" type="button">Activate BP offer</button>
-            </div>
+            <div class="check"><input type="checkbox" id="lev_bp" checked /> BP offer enabled (TP2/TP3)</div>
+            <div class="check"><input type="checkbox" id="lev_recovery" checked /> Recovery path (TP3, TP5, TP6)</div>
           </div>
         </section>
 
         <section class="panel">
-          <div class="panel-h">
-            <h2>Eligible tonight</h2>
-            <span class="pill" id="evalBadge">idle</span>
-          </div>
+          <div class="panel-h"><h2>Cohort &amp; assumptions</h2></div>
           <div class="panel-b">
-            <div class="fire-list" id="fireList"></div>
-            <div class="note">
-              <strong>How it works:</strong> matching rules are candidates.
-              Lowest priority number wins the send. Already-sent IDs never re-fire.
-              Existing lifecycle comms are blocked when a TP owns that moment.
-            </div>
-          </div>
-        </section>
+            <label class="field">
+              <span class="l">Members to simulate</span>
+              <div class="range-row">
+                <input type="range" id="lev_n" min="100" max="2000" step="100" value="800" />
+                <output id="out_n">800</output>
+              </div>
+            </label>
+            <label class="field">
+              <span class="l">Horizon (days)</span>
+              <div class="range-row">
+                <input type="range" id="lev_horizon" min="30" max="90" step="5" value="60" />
+                <output id="out_horizon">60</output>
+              </div>
+            </label>
+            <label class="field">
+              <span class="l">Random seed</span>
+              <input type="number" id="lev_seed" value="42" />
+            </label>
 
-        <section class="panel full">
-          <div class="panel-h">
-            <h2>Send &amp; event log</h2>
-            <button class="btn btn-ghost" id="btnClearLog" type="button">Clear log</button>
-          </div>
-          <div class="panel-b">
-            <ul class="log" id="log"></ul>
+            <p class="assumptions" style="margin: 12px 0 8px;">
+              Archetype mix (plausible retail loyalty):
+              <code>50%</code> cold-start ·
+              <code>30%</code> habit-former ·
+              <code>20%</code> tier-chaser.
+              Base 2nd purchase without nudge <code>18%</code>;
+              TP2 lift <code>+12pp</code>;
+              tier given 2+ purchases <code>35–55%</code> by archetype;
+              redeem given tier <code>40%</code>, +TP5 <code>+15pp</code>;
+              each extra recovery comm fatigue <code>−2pp</code> on next action.
+              Directional only — not a forecast.
+            </p>
+
+            <div class="btn-row">
+              <button type="button" class="btn btn-primary" id="btnRun">Run simulation</button>
+              <button type="button" class="btn btn-honey" id="btnLock">Lock as program</button>
+              <button type="button" class="btn btn-ghost" id="btnResetLevers">Reset to scamp defaults</button>
+            </div>
+            <div class="callout">
+              <strong>How to use:</strong> tweak levers → run → read outcomes → lock.
+              Locked rules drive Runtime and Export.
+            </div>
           </div>
         </section>
       </div>
-    </div>
 
-    <!-- RULES -->
-    <div class="view" id="view-rules">
-      <section class="panel">
-        <div class="panel-h"><h2>WHEN → THEN (TP as rules)</h2></div>
+      <section class="panel" style="margin-top: 16px;">
+        <div class="panel-h">
+          <h2>Outcomes</h2>
+          <span class="pill" id="simStatus">not run</span>
+        </div>
         <div class="panel-b">
-          <div class="table-scroll">
-          <table class="rules-table" id="rulesTable">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Priority</th>
-                <th>WHEN</th>
-                <th>THEN</th>
-                <th>Path</th>
-              </tr>
-            </thead>
-            <tbody id="rulesBody"></tbody>
-          </table>
+          <div class="stats" id="outcomeStats">
+            <div class="stat"><div class="k">2nd purchase</div><div class="v">—</div><div class="s">of cohort</div></div>
+            <div class="stat blush"><div class="k">Hit tier</div><div class="v">—</div><div class="s">first-time</div></div>
+            <div class="stat moss"><div class="k">Redeemed</div><div class="v">—</div><div class="s">1st reward</div></div>
+            <div class="stat"><div class="k">Retain (3+)</div><div class="v">—</div><div class="s">habit gate</div></div>
+            <div class="stat"><div class="k">Comms / member</div><div class="v">—</div><div class="s">avg sends</div></div>
+            <div class="stat blush"><div class="k">Cost score</div><div class="v">—</div><div class="s">relative index</div></div>
+            <div class="stat moss"><div class="k">Efficiency</div><div class="v">—</div><div class="s">redeem % / comms</div></div>
+            <div class="stat"><div class="k">Days to 2nd</div><div class="v">—</div><div class="s">median (among converters)</div></div>
           </div>
         </div>
       </section>
     </div>
 
-    <!-- LIFECYCLE -->
-    <div class="view" id="view-lifecycle">
+    <!-- ========== COMPARE ========== -->
+    <div class="view" id="view-compare">
       <section class="panel">
-        <div class="panel-h"><h2>Existing lifecycle vs current state</h2></div>
+        <div class="panel-h">
+          <h2>Variant A vs B</h2>
+          <div class="btn-row" style="margin:0">
+            <button type="button" class="btn btn-honey" id="btnSnapA">Snapshot A from Design</button>
+            <button type="button" class="btn btn-honey" id="btnSnapB">Snapshot B from Design</button>
+            <button type="button" class="btn btn-primary" id="btnCompare">Run compare</button>
+          </div>
+        </div>
         <div class="panel-b">
-          <div class="lifecycle" id="lifecycleList"></div>
-          <div class="note">
-            Same state table drives nurture TPs <em>and</em> what happens to legacy lifecycle.
-            Update / remove / exclude is just another rule outcome.
+          <div class="grid-2" id="compareGrid">
+            <div class="compare-col" id="colA">
+              <h3>Variant A</h3>
+              <p class="empty">Snapshot levers from Design first.</p>
+            </div>
+            <div class="compare-col" id="colB">
+              <h3>Variant B</h3>
+              <p class="empty">Snapshot levers from Design first.</p>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button type="button" class="btn btn-primary" id="btnUseA" disabled>Lock A as program</button>
+            <button type="button" class="btn btn-primary" id="btnUseB" disabled>Lock B as program</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ========== RUNTIME ========== -->
+    <div class="view" id="view-runtime">
+      <div class="day-bar">
+        <div class="clock">Day <span id="dayLabel">0</span></div>
+        <button type="button" class="btn btn-primary" id="btnAdvance">+1 day &amp; evaluate</button>
+        <button type="button" class="btn" id="btnAdvance7">+7 days</button>
+        <button type="button" class="btn btn-ghost" id="btnResetMember">Reset member</button>
+      </div>
+      <div class="grid-2">
+        <section class="panel">
+          <div class="panel-h"><h2>Member state</h2><span class="pill on" id="lockedPill">using locked rules</span></div>
+          <div class="panel-b">
+            <div class="dims">
+              <div class="dim" id="dimPurchases"><label>Purchases</label><div class="val" id="valPurchases">0</div><div class="hint">count</div></div>
+              <div class="dim" id="dimDays"><label>Days since action</label><div class="val" id="valDays">—</div><div class="hint" id="hintDays">no clock</div></div>
+              <div class="dim" id="dimTier"><label>Tier</label><div class="val" id="valTier">No</div><div class="hint">binary</div></div>
+              <div class="dim" id="dimRedeemed"><label>1st redeemed</label><div class="val" id="valRedeemed">No</div><div class="hint">binary</div></div>
+            </div>
+            <div class="toggle" id="togBp"><span>BP offer active</span><div class="switch"></div></div>
+            <div class="toggle" id="togBpDone"><span>BP completed</span><div class="switch"></div></div>
+            <div class="btn-row" style="margin-top:14px">
+              <button type="button" class="btn btn-honey" id="btnPurchase">Record purchase</button>
+              <button type="button" class="btn" id="btnTier">Achieve tier</button>
+              <button type="button" class="btn" id="btnRedeem">Redeem 1st reward</button>
+              <button type="button" class="btn" id="btnActivateBp">Activate BP offer</button>
+            </div>
+          </div>
+        </section>
+        <section class="panel">
+          <div class="panel-h"><h2>Eligible tonight</h2><span class="pill" id="evalBadge">idle</span></div>
+          <div class="panel-b"><div id="fireList"><div class="empty">Advance a day or fire an event.</div></div></div>
+        </section>
+        <section class="panel" style="grid-column:1/-1">
+          <div class="panel-h"><h2>Send &amp; event log</h2><button type="button" class="btn btn-ghost" id="btnClearLog">Clear</button></div>
+          <div class="panel-b"><ul class="log" id="log"></ul></div>
+        </section>
+      </div>
+    </div>
+
+    <!-- ========== EXPORT ========== -->
+    <div class="view" id="view-export">
+      <section class="panel">
+        <div class="panel-h">
+          <h2>Locked program rules</h2>
+          <button type="button" class="btn btn-primary" id="btnCopy">Copy JSON</button>
+        </div>
+        <div class="panel-b">
+          <div class="table-scroll" style="margin-bottom:16px">
+            <table class="rules"><thead>
+              <tr><th>ID</th><th>Name</th><th>P</th><th>WHEN</th><th>THEN</th><th>Path</th></tr>
+            </thead><tbody id="rulesBody"></tbody></table>
+          </div>
+          <textarea id="exportJson" readonly spellcheck="false"></textarea>
+          <div class="callout">
+            Hand this to CRM/ESP as the nurture decision layer — state triggers, not a linear journey.
           </div>
         </div>
       </section>
     </div>
   </div>
 
-  <script>
-    const RULES = [
-      {
-        id: "TP1",
-        name: "Progress Recognition",
-        priority: 10,
-        path: "Happy",
-        when: "purchases ≥ 1 · day = first_purchase + 1 · TP1 not sent",
-        then: "Celebrate 1st points earned",
-        match(s) {
-          if (s.purchases < 1 || s.sent.has("TP1")) return false;
-          if (s.firstPurchaseDay == null) return false;
-          return s.day === s.firstPurchaseDay + 1;
-        },
+<script>
+/* ========== RNG ========== */
+function mulberry32(a) {
+  return function () {
+    let t = (a += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/* ========== LEVERS ========== */
+const SCAMP_DEFAULTS = {
+  tp1: 1,
+  tp2a: 4,
+  tp2b: 8,
+  bpExpiry: 14,
+  tp3: 5,
+  tp5: 7,
+  tp6: 30,
+  bp: true,
+  recovery: true,
+  n: 800,
+  horizon: 60,
+  seed: 42,
+};
+
+function readLevers() {
+  return {
+    tp1: +$("lev_tp1").value,
+    tp2a: +$("lev_tp2a").value,
+    tp2b: +$("lev_tp2b").value,
+    bpExpiry: +$("lev_bpExpiry").value,
+    tp3: +$("lev_tp3").value,
+    tp5: +$("lev_tp5").value,
+    tp6: +$("lev_tp6").value,
+    bp: $("lev_bp").checked,
+    recovery: $("lev_recovery").checked,
+    n: +$("lev_n").value,
+    horizon: +$("lev_horizon").value,
+    seed: +$("lev_seed").value || 42,
+  };
+}
+
+function writeLevers(L) {
+  $("lev_tp1").value = L.tp1;
+  $("lev_tp2a").value = L.tp2a;
+  $("lev_tp2b").value = L.tp2b;
+  $("lev_bpExpiry").value = L.bpExpiry;
+  $("lev_tp3").value = L.tp3;
+  $("lev_tp5").value = L.tp5;
+  $("lev_tp6").value = L.tp6;
+  $("lev_bp").checked = L.bp;
+  $("lev_recovery").checked = L.recovery;
+  $("lev_n").value = L.n;
+  $("lev_horizon").value = L.horizon;
+  $("lev_seed").value = L.seed;
+  syncOutputs();
+}
+
+function syncOutputs() {
+  ["tp1","tp2a","tp2b","bpExpiry","tp3","tp5","tp6","n","horizon"].forEach((k) => {
+    const el = $("out_" + k);
+    const inp = $("lev_" + k);
+    if (el && inp) el.textContent = inp.value;
+  });
+}
+
+/* ========== RULE COMPILER ========== */
+function compileRules(L) {
+  const rules = [];
+  rules.push({
+    id: "TP1",
+    name: "Progress Recognition",
+    priority: 10,
+    path: "Happy",
+    when: `purchases ≥ 1 · day = first_purchase + ${L.tp1} · not sent`,
+    then: "Celebrate 1st points earned",
+    enabled: true,
+    match(s) {
+      if (s.purchases < 1 || s.sent.has("TP1") || s.firstPurchaseDay == null) return false;
+      return s.day === s.firstPurchaseDay + L.tp1;
+    },
+  });
+  rules.push({
+    id: "TP4",
+    name: "Reward Unlock Celebration",
+    priority: 15,
+    path: "Happy",
+    when: "tier first-time · day ∈ tier+{1,3,7} · not sent",
+    then: "Celebrate tier + drive redemption",
+    enabled: true,
+    match(s) {
+      if (!s.tier || s.sent.has("TP4") || s.tierDay == null) return false;
+      const d = s.day - s.tierDay;
+      return d === 1 || d === 3 || d === 7;
+    },
+  });
+  if (L.bp) {
+    rules.push({
+      id: "TP2",
+      name: "Bonus Point Offer",
+      priority: 20,
+      path: "Happy",
+      when: `purchases=1 · !tier · day ∈ first+{${L.tp2a},${L.tp2b}} · TP1 sent`,
+      then: "Unlock bonus-point offer",
+      enabled: true,
+      match(s) {
+        if (s.purchases !== 1 || s.tier || s.sent.has("TP2")) return false;
+        if (!s.sent.has("TP1") || s.firstPurchaseDay == null) return false;
+        const d = s.day - s.firstPurchaseDay;
+        return d === L.tp2a || d === L.tp2b;
       },
-      {
-        id: "TP4",
-        name: "Reward Unlock Celebration",
-        priority: 15,
-        path: "Happy",
-        when: "tier first-time · day ∈ tier+{1,3,7} · TP4 not sent",
-        then: "Celebrate tier + drive redemption",
-        match(s) {
-          if (!s.tier || s.sent.has("TP4") || s.tierDay == null) return false;
-          const d = s.day - s.tierDay;
-          return d === 1 || d === 3 || d === 7;
-        },
-      },
-      {
-        id: "TP2",
-        name: "Bonus Point Offer",
-        priority: 20,
-        path: "Happy",
-        when: "purchases = 1 · !tier · day ∈ first+{4,8} · TP1 sent · TP2 not sent",
-        then: "Unlock bonus-point offer",
-        match(s) {
-          if (s.purchases !== 1 || s.tier || s.sent.has("TP2")) return false;
-          if (!s.sent.has("TP1") || s.firstPurchaseDay == null) return false;
-          const d = s.day - s.firstPurchaseDay;
-          return d === 4 || d === 8;
-        },
-      },
-      {
-        id: "TP5",
-        name: "Reward Reminder",
-        priority: 25,
-        path: "Recovery",
-        when: "tier · !redeemed · TP4 sent · day ≥ TP4_day + 7 · TP5 not sent",
-        then: "Drive 1st reward redemption",
-        match(s) {
-          if (!s.tier || s.redeemed || s.sent.has("TP5")) return false;
-          if (!s.sent.has("TP4") || s.tp4Day == null) return false;
-          return s.day >= s.tp4Day + 7;
-        },
-      },
-      {
-        id: "TP3",
-        name: "BP Offer Reminder",
-        priority: 30,
-        path: "Recovery",
-        when: "bp_active · !bp_completed · day = bp_expiry − 5 · TP3 not sent",
-        then: "Remind to complete BP offer",
-        match(s) {
-          if (!s.bpActive || s.bpCompleted || s.sent.has("TP3")) return false;
-          if (s.bpExpiryDay == null) return false;
-          return s.day === s.bpExpiryDay - 5;
-        },
-      },
-      {
-        id: "TP6",
-        name: "Habit Builder",
-        priority: 40,
-        path: "Recovery",
-        when: "purchases ∈ {1,2} · day ≥ last_purchase + 30 · TP6 not sent",
-        then: "Drive next purchase (Retain if ≥ 3)",
-        match(s) {
-          if (s.purchases < 1 || s.purchases >= 3 || s.sent.has("TP6")) return false;
-          if (s.lastPurchaseDay == null) return false;
-          return s.day >= s.lastPurchaseDay + 30;
-        },
-      },
-    ];
-
-    const LIFECYCLE = [
-      {
-        name: "Welcome Day 0 & Day 3",
-        action: "Update",
-        blocked(s) {
-          return s.purchases >= 1;
-        },
-        why(s) {
-          return s.purchases >= 1
-            ? "Blocked — TP1 owns purchasers; Welcome is backup for non-purchasers only"
-            : "Eligible — no purchase yet; Welcome can send";
-        },
-      },
-      {
-        name: "1st points earned",
-        action: "Remove",
-        blocked() {
-          return true;
-        },
-        why() {
-          return "Removed — replaced by TP1";
-        },
-      },
-      {
-        name: "Bonus completion",
-        action: "Update",
-        blocked(s) {
-          return s.bpCompleted && s.tier;
-        },
-        why(s) {
-          return s.bpCompleted && s.tier
-            ? "Excluded — BP redeemed + tier → TP4 owns this moment"
-            : "May send — unless BP completed & eligible for TP4";
-        },
-      },
-      {
-        name: "1st reward redemption",
-        action: "Update creative",
-        blocked(s) {
-          return false;
-        },
-        why(s) {
-          return s.redeemed
-            ? "Fires on redeem event — refresh creative; coordinate with TP4/TP5"
-            : "Waiting for redemption event";
-        },
-      },
-      {
-        name: "All tier-change comms",
-        action: "Update",
-        blocked(s) {
-          return s.tier && !s.sent.has("TP4");
-        },
-        why(s) {
-          return s.tier && !s.sent.has("TP4")
-            ? "Exclude first-time tier — TP4/TP5 replace generic tier change"
-            : s.tier
-              ? "First-time tier already handled via TP4"
-              : "No tier yet — generic tier comms N/A";
-        },
-      },
-    ];
-
-    function freshState() {
-      return {
-        day: 0,
-        purchases: 0,
-        tier: false,
-        redeemed: false,
-        bpActive: false,
-        bpCompleted: false,
-        firstPurchaseDay: null,
-        lastPurchaseDay: null,
-        tierDay: null,
-        tp4Day: null,
-        bpExpiryDay: null,
-        sent: new Set(),
-        log: [],
-      };
-    }
-
-    let state = freshState();
-
-    const $ = (id) => document.getElementById(id);
-
-    function logEntry(type, id, msg) {
-      state.log.unshift({ day: state.day, type, id, msg });
-    }
-
-    function daysSinceAction() {
-      const anchors = [
-        state.lastPurchaseDay,
-        state.tierDay,
-        state.tp4Day,
-      ].filter((d) => d != null);
-      if (!anchors.length) return null;
-      return state.day - Math.max(...anchors);
-    }
-
-    function evaluate(autoSend) {
-      const matched = RULES.filter((r) => r.match(state)).sort(
-        (a, b) => a.priority - b.priority
-      );
-      const winner = matched[0] || null;
-
-      renderState();
-      renderFire(matched, winner);
-      renderRulesHighlight(matched.map((r) => r.id));
-      renderLifecycle();
-      renderLog();
-
-      if (autoSend && winner) {
-        state.sent.add(winner.id);
-        if (winner.id === "TP2") {
-          state.bpActive = true;
-          state.bpExpiryDay = state.day + 14;
-        }
-        if (winner.id === "TP4") state.tp4Day = state.day;
-        logEntry("send", winner.id, winner.then);
-        renderState();
-        renderFire(
-          RULES.filter((r) => r.match(state)).sort((a, b) => a.priority - b.priority),
-          null
-        );
-        renderRulesHighlight([]);
-        renderLifecycle();
-        renderLog();
-        $("evalBadge").textContent = "sent " + winner.id;
-      } else if (matched.length) {
-        $("evalBadge").textContent = matched.length + " candidate(s)";
-      } else {
-        $("evalBadge").textContent = "no match";
-      }
-
-      return winner;
-    }
-
-    function renderState() {
-      $("dayLabel").textContent = String(state.day);
-      $("valPurchases").textContent = String(state.purchases);
-      const dsa = daysSinceAction();
-      $("valDays").textContent = dsa == null ? "—" : String(dsa);
-      $("hintDays").textContent =
-        dsa == null ? "no clock yet" : "since last purchase / tier / TP4";
-      $("valTier").textContent = state.tier ? "Yes" : "No";
-      $("valRedeemed").textContent = state.redeemed ? "Yes" : "No";
-
-      $("dimPurchases").classList.toggle("active", state.purchases > 0);
-      $("dimTier").classList.toggle("active", state.tier);
-      $("dimRedeemed").classList.toggle("active", state.redeemed);
-      $("dimDays").classList.toggle("active", dsa != null);
-
-      $("togBp").classList.toggle("on", state.bpActive);
-      $("togBp").setAttribute("aria-checked", String(state.bpActive));
-      $("togBpDone").classList.toggle("on", state.bpCompleted);
-      $("togBpDone").setAttribute("aria-checked", String(state.bpCompleted));
-
-      $("btnTier").disabled = state.tier || state.purchases < 1;
-      $("btnRedeem").disabled = !state.tier || state.redeemed;
-      $("btnActivateBp").disabled = state.bpActive || state.bpCompleted;
-    }
-
-    function renderFire(matched, winner) {
-      const list = $("fireList");
-      if (!matched.length) {
-        list.innerHTML = '<div class="empty">No rule matches this state on this day.</div>';
-        return;
-      }
-      list.innerHTML = matched
-        .map((r, i) => {
-          const isWin = winner && r.id === winner.id;
-          const cls = isWin ? "fire winner" : "fire suppressed";
-          const pill = isWin
-            ? '<span class="pill send">would send</span>'
-            : '<span class="pill skip">priority loss</span>';
-          const path =
-            r.path === "Happy"
-              ? '<span class="pill happy">Happy</span>'
-              : '<span class="pill recovery">Recovery</span>';
-          return `<div class="${cls}">
-            <div class="fire-top">
-              <strong>${r.id} — ${r.name}</strong>
-              ${pill}
-              ${path}
-              <span class="pill">p${r.priority}</span>
-            </div>
-            <p>${r.then}</p>
-          </div>`;
-        })
-        .join("");
-    }
-
-    function renderLog() {
-      const el = $("log");
-      if (!state.log.length) {
-        el.innerHTML = '<li><span class="msg" style="grid-column:1/-1;text-align:center;color:var(--faint)">Log empty — advance days or fire events.</span></li>';
-        return;
-      }
-      el.innerHTML = state.log
-        .map((e) => {
-          const cls =
-            e.type === "send"
-              ? ""
-              : e.type === "suppress"
-                ? "suppress"
-                : "event";
-          return `<li class="${cls}">
-            <span class="d">D${e.day}</span>
-            <span class="id">${e.id}</span>
-            <span class="msg">${e.msg}</span>
-          </li>`;
-        })
-        .join("");
-    }
-
-    function renderRulesHighlight(liveIds) {
-      const body = $("rulesBody");
-      body.innerHTML = RULES.map((r) => {
-        const live = liveIds.includes(r.id) ? "live" : "";
-        return `<tr class="${live}">
-          <td class="rid">${r.id}</td>
-          <td>${r.name}</td>
-          <td>${r.priority}</td>
-          <td>${r.when}</td>
-          <td>${r.then}</td>
-          <td>${r.path}</td>
-        </tr>`;
-      }).join("");
-    }
-
-    function renderLifecycle() {
-      $("lifecycleList").innerHTML = LIFECYCLE.map((lc) => {
-        const blocked = lc.blocked(state);
-        return `<div class="lc ${blocked ? "active-block" : ""}">
-          <span class="name">${lc.name}</span>
-          <span class="pill">${lc.action}</span>
-          <span class="pill ${blocked ? "skip" : "send"}">${blocked ? "suppressed" : "ok"}</span>
-          <span class="why">${lc.why(state)}</span>
-        </div>`;
-      }).join("");
-    }
-
-    function advance(n) {
-      for (let i = 0; i < n; i++) {
-        state.day += 1;
-        if (state.bpActive && state.bpExpiryDay != null && state.day > state.bpExpiryDay) {
-          state.bpActive = false;
-          logEntry("event", "BP", "Offer expired");
-        }
-        evaluate(true);
-      }
-    }
-
-    // Events
-    $("btnAdvance").onclick = () => advance(1);
-    $("btnAdvance7").onclick = () => advance(7);
-    $("btnReset").onclick = () => {
-      state = freshState();
-      logEntry("event", "SYS", "Member reset");
-      evaluate(false);
-    };
-    $("btnClearLog").onclick = () => {
-      state.log = [];
-      renderLog();
-    };
-
-    $("btnPurchase").onclick = () => {
-      state.purchases += 1;
-      state.lastPurchaseDay = state.day;
-      if (state.firstPurchaseDay == null) state.firstPurchaseDay = state.day;
-      if (state.bpActive) {
-        state.bpCompleted = true;
-        state.bpActive = false;
-      }
-      logEntry("event", "PUR", `Purchase #${state.purchases}`);
-      if (state.purchases >= 3) {
-        logEntry("event", "RET", "Retain stage gate met (3+ purchases)");
-      }
-      evaluate(false);
-    };
-
-    $("btnTier").onclick = () => {
-      if (state.tier) return;
-      state.tier = true;
-      state.tierDay = state.day;
-      logEntry("event", "TIER", "First-time loyalty tier achieved");
-      evaluate(false);
-    };
-
-    $("btnRedeem").onclick = () => {
-      if (!state.tier || state.redeemed) return;
-      state.redeemed = true;
-      logEntry("event", "RDM", "1st reward redeemed — existing celebration may fire");
-      evaluate(false);
-    };
-
-    $("btnActivateBp").onclick = () => {
-      state.bpActive = true;
-      state.bpExpiryDay = state.day + 14;
-      logEntry("event", "BP", "BP offer activated (expires +14d)");
-      evaluate(false);
-    };
-
-    $("togBp").onclick = () => {
-      state.bpActive = !state.bpActive;
-      if (state.bpActive && state.bpExpiryDay == null) {
-        state.bpExpiryDay = state.day + 14;
-      }
-      evaluate(false);
-    };
-
-    $("togBpDone").onclick = () => {
-      state.bpCompleted = !state.bpCompleted;
-      if (state.bpCompleted) state.bpActive = false;
-      evaluate(false);
-    };
-
-    document.querySelectorAll(".tab").forEach((tab) => {
-      tab.onclick = () => {
-        document.querySelectorAll(".tab").forEach((t) => t.classList.remove("on"));
-        document.querySelectorAll(".view").forEach((v) => v.classList.remove("on"));
-        tab.classList.add("on");
-        $("view-" + tab.dataset.view).classList.add("on");
-      };
     });
+  }
+  if (L.bp && L.recovery) {
+    rules.push({
+      id: "TP3",
+      name: "BP Offer Reminder",
+      priority: 30,
+      path: "Recovery",
+      when: `bp_active · !completed · day = expiry − ${L.tp3}`,
+      then: "Remind to complete BP offer",
+      enabled: true,
+      match(s) {
+        if (!s.bpActive || s.bpCompleted || s.sent.has("TP3")) return false;
+        if (s.bpExpiryDay == null) return false;
+        return s.day === s.bpExpiryDay - L.tp3;
+      },
+    });
+  }
+  if (L.recovery) {
+    rules.push({
+      id: "TP5",
+      name: "Reward Reminder",
+      priority: 25,
+      path: "Recovery",
+      when: `tier · !redeemed · TP4 sent · day ≥ TP4 + ${L.tp5}`,
+      then: "Drive 1st reward redemption",
+      enabled: true,
+      match(s) {
+        if (!s.tier || s.redeemed || s.sent.has("TP5")) return false;
+        if (!s.sent.has("TP4") || s.tp4Day == null) return false;
+        return s.day >= s.tp4Day + L.tp5;
+      },
+    });
+    rules.push({
+      id: "TP6",
+      name: "Habit Builder",
+      priority: 40,
+      path: "Recovery",
+      when: `purchases ∈ {1,2} · day ≥ last_purchase + ${L.tp6}`,
+      then: "Drive next purchase (Retain if ≥ 3)",
+      enabled: true,
+      match(s) {
+        if (s.purchases < 1 || s.purchases >= 3 || s.sent.has("TP6")) return false;
+        if (s.lastPurchaseDay == null) return false;
+        return s.day >= s.lastPurchaseDay + L.tp6;
+      },
+    });
+  }
+  return rules.sort((a, b) => a.priority - b.priority);
+}
 
-    // Seed a useful starting point: just purchased on day 0
-    state.purchases = 1;
-    state.firstPurchaseDay = 0;
-    state.lastPurchaseDay = 0;
-    logEntry("event", "PUR", "Purchase #1 (seed)");
-    evaluate(false);
-  </script>
+/* ========== SIM ========== */
+const ARCHETYPES = [
+  { id: "cold", weight: 0.5, p2: 0.12, tier: 0.35, redeem: 0.32, tp2Lift: 0.14, tp5Lift: 0.12 },
+  { id: "habit", weight: 0.3, p2: 0.22, tier: 0.45, redeem: 0.42, tp2Lift: 0.11, tp5Lift: 0.14 },
+  { id: "chaser", weight: 0.2, p2: 0.28, tier: 0.55, redeem: 0.52, tp2Lift: 0.10, tp5Lift: 0.18 },
+];
+
+function pickArchetype(rnd) {
+  let r = rnd();
+  for (const a of ARCHETYPES) {
+    r -= a.weight;
+    if (r <= 0) return a;
+  }
+  return ARCHETYPES[0];
+}
+
+function simulate(L) {
+  const rules = compileRules(L);
+  const rnd = mulberry32(L.seed | 0);
+  const bpDays = L.bpExpiry;
+
+  let second = 0, tierN = 0, redeemN = 0, retain = 0, comms = 0;
+  const daysToSecond = [];
+
+  for (let i = 0; i < L.n; i++) {
+    const arch = pickArchetype(rnd);
+    const m = {
+      day: 0,
+      purchases: 1,
+      tier: false,
+      redeemed: false,
+      bpActive: false,
+      bpCompleted: false,
+      firstPurchaseDay: 0,
+      lastPurchaseDay: 0,
+      tierDay: null,
+      tp4Day: null,
+      bpExpiryDay: null,
+      sent: new Set(),
+      arch,
+      fatigue: 0,
+    };
+
+    for (let d = 0; d <= L.horizon; d++) {
+      m.day = d;
+
+      if (m.bpActive && m.bpExpiryDay != null && d > m.bpExpiryDay) {
+        m.bpActive = false;
+      }
+
+      // Evaluate & send (one per day, priority)
+      const matched = rules.filter((r) => r.match(m));
+      if (matched.length) {
+        const w = matched[0];
+        m.sent.add(w.id);
+        comms++;
+        m.fatigue++;
+        if (w.id === "TP2") {
+          m.bpActive = true;
+          m.bpExpiryDay = d + bpDays;
+        }
+        if (w.id === "TP4") m.tp4Day = d;
+      }
+
+      // Stochastic behaviours
+      const fat = Math.max(0, 1 - m.fatigue * 0.02);
+
+      // 2nd / 3rd purchase attempts
+      if (m.purchases === 1 && d > 0) {
+        let p = arch.p2;
+        if (m.sent.has("TP2") && d <= (m.firstPurchaseDay + L.tp2b + 3)) p += arch.tp2Lift;
+        if (m.sent.has("TP6")) p += 0.06;
+        p *= fat;
+        if (rnd() < p / L.horizon) {
+          m.purchases = 2;
+          m.lastPurchaseDay = d;
+          if (m.bpActive) { m.bpCompleted = true; m.bpActive = false; }
+          daysToSecond.push(d);
+        }
+      } else if (m.purchases === 2) {
+        let p = arch.p2 * 0.7;
+        if (m.sent.has("TP6")) p += 0.08;
+        p *= fat;
+        if (rnd() < p / L.horizon) {
+          m.purchases = 3;
+          m.lastPurchaseDay = d;
+        }
+      }
+
+      // Tier after enough purchases (scamp: can hit on 1st–3rd)
+      if (!m.tier && m.purchases >= 1) {
+        let p = arch.tier * (m.purchases / 3);
+        if (m.bpCompleted) p += 0.08;
+        if (rnd() < p / (L.horizon * 0.8)) {
+          m.tier = true;
+          m.tierDay = d;
+        }
+      }
+
+      // Redeem
+      if (m.tier && !m.redeemed) {
+        let p = arch.redeem;
+        if (m.sent.has("TP4")) p += 0.08;
+        if (m.sent.has("TP5")) p += arch.tp5Lift;
+        p *= fat;
+        if (rnd() < p / (L.horizon * 0.7)) {
+          m.redeemed = true;
+        }
+      }
+    }
+
+    if (m.purchases >= 2) second++;
+    if (m.tier) tierN++;
+    if (m.redeemed) redeemN++;
+    if (m.purchases >= 3) retain++;
+  }
+
+  daysToSecond.sort((a, b) => a - b);
+  const median = daysToSecond.length
+    ? daysToSecond[Math.floor(daysToSecond.length / 2)]
+    : null;
+
+  const pct = (x) => (100 * x) / L.n;
+  const avgComms = comms / L.n;
+  const cost = avgComms * 1.0 + (L.bp ? 0.4 : 0) + (L.recovery ? 0.3 : 0);
+  const efficiency = avgComms > 0 ? pct(redeemN) / avgComms : 0;
+
+  return {
+    levers: { ...L },
+    rules: compileRules(L).map(({ match, ...rest }) => rest),
+    metrics: {
+      second: pct(second),
+      tier: pct(tierN),
+      redeem: pct(redeemN),
+      retain: pct(retain),
+      avgComms,
+      cost,
+      efficiency,
+      medianSecond: median,
+      n: L.n,
+      horizon: L.horizon,
+    },
+  };
+}
+
+/* ========== STATE ========== */
+let lockedLevers = { ...SCAMP_DEFAULTS };
+let lockedRules = compileRules(lockedLevers);
+let lastSim = null;
+let snapA = null;
+let snapB = null;
+let compareResult = null;
+
+let member = freshMember();
+
+function freshMember() {
+  return {
+    day: 0,
+    purchases: 1,
+    tier: false,
+    redeemed: false,
+    bpActive: false,
+    bpCompleted: false,
+    firstPurchaseDay: 0,
+    lastPurchaseDay: 0,
+    tierDay: null,
+    tp4Day: null,
+    bpExpiryDay: null,
+    sent: new Set(),
+    log: [{ day: 0, type: "event", id: "PUR", msg: "Purchase #1 (seed)" }],
+  };
+}
+
+function $(id) { return document.getElementById(id); }
+
+/* ========== UI HELPERS ========== */
+function fmtPct(x) { return x.toFixed(1) + "%"; }
+function fmtNum(x) { return x.toFixed(2); }
+
+function renderOutcomes(metrics, elPrefix) {
+  // design tab uses outcomeStats children
+  const root = $("outcomeStats");
+  const vals = [
+    fmtPct(metrics.second),
+    fmtPct(metrics.tier),
+    fmtPct(metrics.redeem),
+    fmtPct(metrics.retain),
+    fmtNum(metrics.avgComms),
+    fmtNum(metrics.cost),
+    fmtNum(metrics.efficiency),
+    metrics.medianSecond == null ? "—" : String(metrics.medianSecond),
+  ];
+  [...root.querySelectorAll(".stat .v")].forEach((el, i) => { el.textContent = vals[i]; });
+}
+
+function metricsBlock(m, L) {
+  return `
+    <p style="font-size:0.78rem;color:var(--faint);margin-bottom:10px">
+      TP1+${L.tp1} · TP2 ${L.tp2a}/${L.tp2b} · TP5+${L.tp5} · TP6+${L.tp6} ·
+      BP ${L.bp ? "on" : "off"} · Recovery ${L.recovery ? "on" : "off"}
+    </p>
+    <div class="stats" style="grid-template-columns:1fr 1fr">
+      <div class="stat"><div class="k">2nd purchase</div><div class="v">${fmtPct(m.second)}</div></div>
+      <div class="stat blush"><div class="k">Tier</div><div class="v">${fmtPct(m.tier)}</div></div>
+      <div class="stat moss"><div class="k">Redeemed</div><div class="v">${fmtPct(m.redeem)}</div></div>
+      <div class="stat"><div class="k">Comms/member</div><div class="v">${fmtNum(m.avgComms)}</div></div>
+      <div class="stat"><div class="k">Cost score</div><div class="v">${fmtNum(m.cost)}</div></div>
+      <div class="stat moss"><div class="k">Efficiency</div><div class="v">${fmtNum(m.efficiency)}</div></div>
+    </div>`;
+}
+
+function lockProgram(L, label) {
+  lockedLevers = { ...L };
+  lockedRules = compileRules(lockedLevers);
+  writeLevers(lockedLevers);
+  renderExport();
+  $("lockedPill").textContent = "locked · " + (label || "design");
+  member = freshMember();
+  evaluateRuntime(false);
+  alert("Program locked. Runtime + Export now use these rules.");
+}
+
+function renderExport() {
+  const body = $("rulesBody");
+  body.innerHTML = lockedRules.map((r) =>
+    `<tr>
+      <td class="rid">${r.id}</td>
+      <td>${r.name}</td>
+      <td>${r.priority}</td>
+      <td>${r.when}</td>
+      <td>${r.then}</td>
+      <td>${r.path}</td>
+    </tr>`
+  ).join("");
+
+  const payload = {
+    name: "Loyalty Studio program",
+    lockedAt: new Date().toISOString(),
+    levers: lockedLevers,
+    rules: lockedRules.map(({ match, enabled, ...rest }) => rest),
+    note: "State-triggered nurture rules. Not a linear journey.",
+  };
+  $("exportJson").value = JSON.stringify(payload, null, 2);
+}
+
+/* ========== RUNTIME ========== */
+function daysSinceAction() {
+  const a = [member.lastPurchaseDay, member.tierDay, member.tp4Day].filter((d) => d != null);
+  if (!a.length) return null;
+  return member.day - Math.max(...a);
+}
+
+function evaluateRuntime(autoSend) {
+  const matched = lockedRules.filter((r) => r.match(member)).sort((a, b) => a.priority - b.priority);
+  const winner = matched[0] || null;
+
+  $("dayLabel").textContent = String(member.day);
+  $("valPurchases").textContent = String(member.purchases);
+  const dsa = daysSinceAction();
+  $("valDays").textContent = dsa == null ? "—" : String(dsa);
+  $("hintDays").textContent = dsa == null ? "no clock" : "since last signal";
+  $("valTier").textContent = member.tier ? "Yes" : "No";
+  $("valRedeemed").textContent = member.redeemed ? "Yes" : "No";
+  $("dimPurchases").classList.toggle("active", member.purchases > 0);
+  $("dimTier").classList.toggle("active", member.tier);
+  $("dimRedeemed").classList.toggle("active", member.redeemed);
+  $("dimDays").classList.toggle("active", dsa != null);
+  $("togBp").classList.toggle("on", member.bpActive);
+  $("togBpDone").classList.toggle("on", member.bpCompleted);
+  $("btnTier").disabled = member.tier || member.purchases < 1;
+  $("btnRedeem").disabled = !member.tier || member.redeemed;
+  $("btnActivateBp").disabled = member.bpActive || member.bpCompleted;
+
+  const list = $("fireList");
+  if (!matched.length) {
+    list.innerHTML = '<div class="empty">No rule matches this state on this day.</div>';
+    $("evalBadge").textContent = "no match";
+  } else {
+    list.innerHTML = matched.map((r, i) => {
+      const win = winner && r.id === winner.id;
+      return `<div class="fire ${win ? "winner" : "suppressed"}">
+        <div class="fire-top">
+          <strong>${r.id} — ${r.name}</strong>
+          <span class="pill ${win ? "warn" : ""}">${win ? "would send" : "priority loss"}</span>
+          <span class="pill">p${r.priority}</span>
+        </div>
+        <p>${r.then}</p>
+      </div>`;
+    }).join("");
+    $("evalBadge").textContent = matched.length + " candidate(s)";
+  }
+
+  if (autoSend && winner) {
+    member.sent.add(winner.id);
+    if (winner.id === "TP2") {
+      member.bpActive = true;
+      member.bpExpiryDay = member.day + lockedLevers.bpExpiry;
+    }
+    if (winner.id === "TP4") member.tp4Day = member.day;
+    member.log.unshift({ day: member.day, type: "send", id: winner.id, msg: winner.then });
+    $("evalBadge").textContent = "sent " + winner.id;
+    evaluateRuntime(false);
+    return;
+  }
+  renderLog();
+}
+
+function renderLog() {
+  const el = $("log");
+  if (!member.log.length) {
+    el.innerHTML = '<li><span class="msg" style="grid-column:1/-1;text-align:center">Log empty</span></li>';
+    return;
+  }
+  el.innerHTML = member.log.map((e) =>
+    `<li class="${e.type === "event" ? "event" : ""}">
+      <span class="d">D${e.day}</span>
+      <span class="id">${e.id}</span>
+      <span class="msg">${e.msg}</span>
+    </li>`
+  ).join("");
+}
+
+function advance(n) {
+  for (let i = 0; i < n; i++) {
+    member.day += 1;
+    if (member.bpActive && member.bpExpiryDay != null && member.day > member.bpExpiryDay) {
+      member.bpActive = false;
+      member.log.unshift({ day: member.day, type: "event", id: "BP", msg: "Offer expired" });
+    }
+    evaluateRuntime(true);
+  }
+}
+
+/* ========== WIRE ========== */
+document.querySelectorAll(".tab").forEach((tab) => {
+  tab.onclick = () => {
+    document.querySelectorAll(".tab").forEach((t) => t.classList.remove("on"));
+    document.querySelectorAll(".view").forEach((v) => v.classList.remove("on"));
+    tab.classList.add("on");
+    $("view-" + tab.dataset.view).classList.add("on");
+    if (tab.dataset.view === "export") renderExport();
+  };
+});
+
+["tp1","tp2a","tp2b","bpExpiry","tp3","tp5","tp6","n","horizon"].forEach((k) => {
+  $("lev_" + k).addEventListener("input", syncOutputs);
+});
+
+$("btnResetLevers").onclick = () => writeLevers(SCAMP_DEFAULTS);
+
+$("btnRun").onclick = () => {
+  const L = readLevers();
+  $("simStatus").textContent = "running…";
+  // yield so UI updates
+  setTimeout(() => {
+    lastSim = simulate(L);
+    renderOutcomes(lastSim.metrics);
+    $("simStatus").textContent = `n=${L.n} · seed ${L.seed} · ${L.horizon}d`;
+  }, 30);
+};
+
+$("btnLock").onclick = () => {
+  const L = readLevers();
+  lockProgram(L, "design");
+};
+
+$("btnSnapA").onclick = () => {
+  snapA = readLevers();
+  $("colA").innerHTML = `<h3>Variant A</h3><p class="empty">Ready — run compare.</p>`;
+};
+$("btnSnapB").onclick = () => {
+  snapB = readLevers();
+  $("colB").innerHTML = `<h3>Variant B</h3><p class="empty">Ready — run compare.</p>`;
+};
+$("btnCompare").onclick = () => {
+  if (!snapA || !snapB) {
+    alert("Snapshot both A and B from Design first.");
+    return;
+  }
+  const ra = simulate(snapA);
+  const rb = simulate(snapB);
+  compareResult = { a: ra, b: rb };
+  const aBetter = ra.metrics.efficiency >= rb.metrics.efficiency;
+  $("colA").className = "compare-col" + (aBetter ? " winner-col" : "");
+  $("colB").className = "compare-col" + (!aBetter ? " winner-col" : "");
+  $("colA").innerHTML = `<h3>Variant A ${aBetter ? "· lean here" : ""}</h3>` + metricsBlock(ra.metrics, snapA);
+  $("colB").innerHTML = `<h3>Variant B ${!aBetter ? "· lean here" : ""}</h3>` + metricsBlock(rb.metrics, snapB);
+  $("btnUseA").disabled = false;
+  $("btnUseB").disabled = false;
+};
+$("btnUseA").onclick = () => snapA && lockProgram(snapA, "compare A");
+$("btnUseB").onclick = () => snapB && lockProgram(snapB, "compare B");
+
+$("btnAdvance").onclick = () => advance(1);
+$("btnAdvance7").onclick = () => advance(7);
+$("btnResetMember").onclick = () => { member = freshMember(); evaluateRuntime(false); };
+$("btnClearLog").onclick = () => { member.log = []; renderLog(); };
+$("btnPurchase").onclick = () => {
+  member.purchases += 1;
+  member.lastPurchaseDay = member.day;
+  if (member.firstPurchaseDay == null) member.firstPurchaseDay = member.day;
+  if (member.bpActive) { member.bpCompleted = true; member.bpActive = false; }
+  member.log.unshift({ day: member.day, type: "event", id: "PUR", msg: "Purchase #" + member.purchases });
+  if (member.purchases >= 3) member.log.unshift({ day: member.day, type: "event", id: "RET", msg: "Retain gate (3+)" });
+  evaluateRuntime(false);
+};
+$("btnTier").onclick = () => {
+  if (member.tier) return;
+  member.tier = true;
+  member.tierDay = member.day;
+  member.log.unshift({ day: member.day, type: "event", id: "TIER", msg: "First-time tier" });
+  evaluateRuntime(false);
+};
+$("btnRedeem").onclick = () => {
+  if (!member.tier || member.redeemed) return;
+  member.redeemed = true;
+  member.log.unshift({ day: member.day, type: "event", id: "RDM", msg: "1st reward redeemed" });
+  evaluateRuntime(false);
+};
+$("btnActivateBp").onclick = () => {
+  member.bpActive = true;
+  member.bpExpiryDay = member.day + lockedLevers.bpExpiry;
+  member.log.unshift({ day: member.day, type: "event", id: "BP", msg: "BP offer activated" });
+  evaluateRuntime(false);
+};
+$("togBp").onclick = () => {
+  member.bpActive = !member.bpActive;
+  if (member.bpActive && member.bpExpiryDay == null) member.bpExpiryDay = member.day + lockedLevers.bpExpiry;
+  evaluateRuntime(false);
+};
+$("togBpDone").onclick = () => {
+  member.bpCompleted = !member.bpCompleted;
+  if (member.bpCompleted) member.bpActive = false;
+  evaluateRuntime(false);
+};
+
+$("btnCopy").onclick = async () => {
+  try {
+    await navigator.clipboard.writeText($("exportJson").value);
+    $("btnCopy").textContent = "Copied";
+    setTimeout(() => { $("btnCopy").textContent = "Copy JSON"; }, 1500);
+  } catch {
+    $("exportJson").select();
+    document.execCommand("copy");
+  }
+};
+
+// boot
+syncOutputs();
+renderExport();
+evaluateRuntime(false);
+</script>
 </body>
 </html>

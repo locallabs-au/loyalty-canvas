@@ -1,26 +1,30 @@
-﻿# Loyalty Canvas
+﻿# Loyalty Studio
 
-Interactive **state → rules → send** model for the loyalty nurture programme.
+Simulate outcomes → lock rules → ship the program.
 
-Not a journey map: member state across purchases, tier, redemption, and time; TP1–TP6 as WHEN/THEN rules with priority.
+Not a journey map. A scrappy design lab: tweak nurture levers (from the scamp timings), run a directional cohort sim, compare variants, export WHEN/THEN rules for CRM/ESP.
 
-## Live model
+## Live
 
-Open [index.html](./index.html) locally, or after GitHub Pages is on:
+After GitHub Pages is enabled:
 
 **https://locallabs-au.github.io/loyalty-canvas/**
 
-## Enable GitHub Pages
+## Modes
 
-1. Repo **Settings → Pages**
-2. Source: **Deploy from a branch**
-3. Branch: `main` / folder: `/ (root)`
-4. Save — site is live in a minute or two
+| Tab | Purpose |
+|-----|---------|
+| **Design** | Levers + assumptions → run simulation → outcomes |
+| **Compare** | Snapshot A/B from Design, pick a winner |
+| **Runtime** | One-member state engine using locked rules |
+| **Export** | Rule table + JSON for implementation |
 
-## Contents
+## Defaults
 
-| File | Purpose |
-|------|---------|
-| `index.html` | Working simulator (share this) |
-| `image (2).png` | Nurture journey scamp (reference) |
-| `image (3).png` | Lifecycle impact scamp (reference) |
+Scamp-aligned timings: TP1 +1d · TP2 +4/+8d · TP3 expiry−5d · TP4 +1/3/7d · TP5 +7d · TP6 +30d · Retain at 3 purchases.
+
+Conversion assumptions are **plausible / directional** — labelled in the UI, not a forecast.
+
+## Local
+
+Open `index.html` in a browser. Single file, no build.
