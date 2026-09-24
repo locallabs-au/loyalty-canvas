@@ -218,6 +218,8 @@
       text-transform: uppercase;
       color: var(--faint);
       margin-bottom: 6px;
+      overflow-wrap: anywhere;
+      line-height: 1.25;
     }
 
     .dim .val {
@@ -583,11 +585,12 @@
 
       .dim label {
         font-size: 0.62rem;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.03em;
       }
 
       .dim .hint {
         overflow-wrap: anywhere;
+        line-height: 1.25;
       }
 
       .events {
@@ -705,7 +708,7 @@
                 <div class="hint">binary</div>
               </div>
               <div class="dim" id="dimRedeemed">
-                <label>1st reward redeemed</label>
+                <label>1st redeemed</label>
                 <div class="val" id="valRedeemed">No</div>
                 <div class="hint">binary</div>
               </div>
