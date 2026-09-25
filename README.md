@@ -8,11 +8,12 @@ Test when loyalty messages should go out — and what they’re trying to achiev
 
 ## How to use
 
-1. **Design** — set timings for each message (first points, bonus offer, reward reminder, come-back…)
-2. **Recommend** — optimise for action, opens, return visits, or reward use
-3. **Compare** — save two setups side by side
-4. **Meet someone** — pick Sam / Alex / Jordan, play two weeks, see the message timeline (compare vs a quieter or more intense setup)
-5. **Export** — hand rules to your CRM team
+1. **Design** — timings lab, channels & engagement, run a cohort test
+2. **Rules** — IFTTT board on purchases / tier / redeemed / time + state tester
+3. **Recommend** — score program setups by goal
+4. **Compare** — save two setups side by side
+5. **Meet someone** — Sam / Alex / Jordan timelines
+6. **Export** — hand rules to your CRM team
 
 Defaults follow common QSR-style loyalty cadence. Automotive and other verticals can be added later.
 
