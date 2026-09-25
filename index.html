@@ -806,6 +806,62 @@
       .msg-chan-grid { grid-template-columns: 1fr; }
     }
 
+    .ifttt-table {
+      width: 100%;
+      min-width: 720px;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+    .ifttt-table th {
+      text-align: left;
+      font-size: 0.62rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--faint);
+      padding: 0 8px 10px 0;
+      border-bottom: 1px solid var(--line);
+      font-weight: 700;
+    }
+    .ifttt-table td {
+      padding: 12px 10px 12px 0;
+      border-bottom: 1px solid var(--line-soft);
+      vertical-align: top;
+      color: var(--muted);
+    }
+    .ifttt-table tr.hit td {
+      background: var(--blush-wash);
+      color: var(--text);
+    }
+    .ifttt-table tr.hit td:first-child {
+      box-shadow: inset 3px 0 0 var(--blush);
+    }
+    .ifttt-table .msg-name {
+      font-weight: 700;
+      color: var(--honey);
+    }
+    .ifttt-table .chip {
+      font-family: ui-monospace, "Cascadia Code", monospace;
+      font-size: 0.72rem;
+      color: var(--text);
+      background: var(--bg-2);
+      padding: 3px 6px;
+      border-radius: 4px;
+      display: inline-block;
+      margin: 1px 0;
+    }
+    .state-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 900px) {
+      .state-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .state-grid { grid-template-columns: 1fr; }
+    }
+    .match-list { display: flex; flex-direction: column; gap: 8px; min-height: 80px; }
+
     .empty {
       text-align: center;
       color: var(--faint);
@@ -882,7 +938,7 @@
       </div>
       <div class="brand-meta">
         <strong>For strategists &amp; CRM teams</strong>
-        Design → recommend → preview → export
+        Design → rules → preview → export
       </div>
     </header>
 
@@ -931,10 +987,11 @@
 
     <nav class="tabs" role="tablist">
       <button type="button" class="tab on" data-view="design">1 · Design</button>
-      <button type="button" class="tab" data-view="recommend">2 · Recommend</button>
-      <button type="button" class="tab" data-view="compare">3 · Compare</button>
-      <button type="button" class="tab" data-view="runtime">4 · Meet someone</button>
-      <button type="button" class="tab" data-view="export">5 · Export</button>
+      <button type="button" class="tab" data-view="rules">2 · Rules</button>
+      <button type="button" class="tab" data-view="recommend">3 · Recommend</button>
+      <button type="button" class="tab" data-view="compare">4 · Compare</button>
+      <button type="button" class="tab" data-view="runtime">5 · Meet someone</button>
+      <button type="button" class="tab" data-view="export">6 · Export</button>
     </nav>
 
     <!-- ========== DESIGN ========== -->
@@ -1104,6 +1161,121 @@
             <div class="stat blush"><div class="k">Open rate</div><div class="v">—</div><div class="s">of sends</div></div>
             <div class="stat moss"><div class="k">Click rate</div><div class="v">—</div><div class="s">of opens</div></div>
             <div class="stat"><div class="k">Act rate</div><div class="v">—</div><div class="s">of clicks → visit/redeem</div></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ========== RULES (IFTTT) ========== -->
+    <div class="view" id="view-rules">
+      <section class="panel">
+        <div class="panel-h">
+          <h2>If this → then that</h2>
+          <span class="pill warn">4 dimensions</span>
+        </div>
+        <div class="panel-b">
+          <p style="color:var(--muted);font-size:0.9rem;max-width:64ch;margin-bottom:14px">
+            This is the real program: not a journey. Each row is a rule —
+            <strong>if</strong> purchases / tier / redeemed / time look like this,
+            <strong>then</strong> send that message. Timings come from Design; change them there or refresh here.
+          </p>
+          <div class="btn-row" style="margin-bottom:14px">
+            <button type="button" class="btn btn-honey" id="btnRulesRefresh">Refresh from Design</button>
+            <button type="button" class="btn btn-primary" id="btnRulesLock">Save these as active program</button>
+            <button type="button" class="btn btn-ghost" id="btnRulesToExport">Open Export</button>
+          </div>
+          <div class="table-scroll">
+            <table class="ifttt-table">
+              <thead>
+                <tr>
+                  <th>Then (message)</th>
+                  <th>Purchases</th>
+                  <th>Tier</th>
+                  <th>Redeemed</th>
+                  <th>Time</th>
+                  <th>Also needs</th>
+                  <th>Channel</th>
+                  <th>P</th>
+                </tr>
+              </thead>
+              <tbody id="iftttBody"></tbody>
+            </table>
+          </div>
+          <div class="callout">
+            <strong>Why this tab:</strong> Design is the timing lab. This board is the IFTTT model —
+            what CRM actually builds. Highlighted rows update when you flip the tester below.
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" style="margin-top:16px">
+        <div class="panel-h">
+          <h2>State tester</h2>
+          <span class="pill" id="rulesMatchBadge">flip the dials</span>
+        </div>
+        <div class="panel-b">
+          <p style="color:var(--muted);font-size:0.85rem;margin-bottom:12px;max-width:58ch">
+            Set a customer on the four dimensions (plus a couple of flags). Matching rules light up —
+            lowest priority number wins if several match.
+          </p>
+          <div class="state-grid">
+            <label class="field">
+              <span class="l">Purchases</span>
+              <select id="rt_purchases">
+                <option value="0">0</option>
+                <option value="1" selected>1</option>
+                <option value="2">2</option>
+                <option value="3">3+</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="l">Tier achieved</span>
+              <select id="rt_tier">
+                <option value="no" selected>No</option>
+                <option value="yes">Yes</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="l">Redeemed</span>
+              <select id="rt_redeemed">
+                <option value="no" selected>No</option>
+                <option value="yes">Yes</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="l">Days since first purchase</span>
+              <input type="number" id="rt_day" min="0" max="90" value="1" />
+            </label>
+            <label class="field">
+              <span class="l">Days since tier (if tiered)</span>
+              <input type="number" id="rt_tierDay" min="0" max="90" value="0" />
+            </label>
+            <label class="field">
+              <span class="l">Days since last purchase</span>
+              <input type="number" id="rt_lastPurch" min="0" max="90" value="1" />
+            </label>
+            <label class="field">
+              <span class="l">Bonus offer</span>
+              <select id="rt_bp">
+                <option value="off" selected>Off</option>
+                <option value="active">Active</option>
+                <option value="done">Completed</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="l">Already sent celebration?</span>
+              <select id="rt_sentTp1">
+                <option value="no">No</option>
+                <option value="yes" selected>Yes</option>
+              </select>
+            </label>
+          </div>
+          <div class="btn-row">
+            <button type="button" class="btn btn-primary" id="btnRulesTest">Test this state</button>
+            <button type="button" class="btn btn-ghost" id="btnRulesPresets">Cycle presets</button>
+          </div>
+          <div class="match-list" id="rulesMatchList" style="margin-top:14px">
+            <div class="empty">Press “Test this state”</div>
           </div>
         </div>
       </section>
@@ -1589,6 +1761,244 @@ function compileRules(L) {
   return rules.sort((a, b) => a.priority - b.priority);
 }
 
+/* ========== RULES TAB (IFTTT board) ========== */
+function ruleDimensionRows(L) {
+  const ch = (id) => {
+    const c = getChannelForMsg(id);
+    return c ? c.name : "—";
+  };
+  const rows = [
+    {
+      id: "TP1",
+      name: MSG.TP1.name,
+      purchases: "≥ 1",
+      tier: "any",
+      redeemed: "any",
+      time: `${L.tp1} day(s) after first purchase`,
+      also: "not already sent",
+      channel: ch("TP1"),
+      priority: 10,
+      on: true,
+    },
+    {
+      id: "TP4",
+      name: MSG.TP4.name,
+      purchases: "any",
+      tier: "yes (first time)",
+      redeemed: "any",
+      time: "1, 3, or 7 days after tier",
+      also: "not already sent",
+      channel: ch("TP4"),
+      priority: 15,
+      on: true,
+    },
+  ];
+  if (L.bp) {
+    rows.push({
+      id: "TP2",
+      name: MSG.TP2.name,
+      purchases: "= 1",
+      tier: "no",
+      redeemed: "any",
+      time: `day ${L.tp2a} or ${L.tp2b} after first purchase`,
+      also: "celebration already sent",
+      channel: ch("TP2"),
+      priority: 20,
+      on: true,
+    });
+  }
+  if (L.bp && L.recovery) {
+    rows.push({
+      id: "TP3",
+      name: MSG.TP3.name,
+      purchases: "any",
+      tier: "any",
+      redeemed: "any",
+      time: `${L.tp3} days before bonus expires`,
+      also: "bonus offer active · not completed",
+      channel: ch("TP3"),
+      priority: 30,
+      on: true,
+    });
+  }
+  if (L.recovery) {
+    rows.push({
+      id: "TP5",
+      name: MSG.TP5.name,
+      purchases: "any",
+      tier: "yes",
+      redeemed: "no",
+      time: `${L.tp5}+ days after tier message`,
+      also: "tier message already sent",
+      channel: ch("TP5"),
+      priority: 25,
+      on: true,
+    });
+    rows.push({
+      id: "TP6",
+      name: MSG.TP6.name,
+      purchases: "1 or 2",
+      tier: "any",
+      redeemed: "any",
+      time: `${L.tp6}+ days since last purchase`,
+      also: "not already sent",
+      channel: ch("TP6"),
+      priority: 40,
+      on: true,
+    });
+  }
+  // off rows for clarity when toggles disabled
+  if (!L.bp) {
+    rows.push({
+      id: "TP2",
+      name: MSG.TP2.name + " (off)",
+      purchases: "= 1",
+      tier: "no",
+      redeemed: "any",
+      time: "—",
+      also: "turned off in Design",
+      channel: ch("TP2"),
+      priority: 20,
+      on: false,
+    });
+  }
+  if (!L.recovery) {
+    ["TP5", "TP6"].forEach((id) => {
+      rows.push({
+        id,
+        name: MSG[id].name + " (off)",
+        purchases: "—",
+        tier: "—",
+        redeemed: "—",
+        time: "—",
+        also: "follow-ups off in Design",
+        channel: ch(id),
+        priority: id === "TP5" ? 25 : 40,
+        on: false,
+      });
+    });
+  }
+  return rows.sort((a, b) => a.priority - b.priority);
+}
+
+function buildTesterState() {
+  const purchases = +$("rt_purchases").value;
+  const tier = $("rt_tier").value === "yes";
+  const redeemed = $("rt_redeemed").value === "yes";
+  const day = +$("rt_day").value || 0;
+  const daysSinceTier = +$("rt_tierDay").value || 0;
+  const daysSinceLast = +$("rt_lastPurch").value || 0;
+  const bp = $("rt_bp").value;
+  const sentTp1 = $("rt_sentTp1").value === "yes";
+
+  const firstPurchaseDay = purchases >= 1 ? 0 : null;
+  const lastPurchaseDay = purchases >= 1 ? day - daysSinceLast : null;
+  const tierDay = tier ? day - daysSinceTier : null;
+  const L = readLevers();
+
+  const sent = new Set();
+  if (sentTp1) sent.add("TP1");
+  // If testing reward reminder / come-back paths, assume prior sends when state implies them
+  if (tier && daysSinceTier >= 1) sent.add("TP4");
+  if (bp !== "off" || (purchases === 1 && day >= L.tp2a)) {
+    // leave TP2 unset unless active/done — tester can imply celebration only
+  }
+  if (bp === "active" || bp === "done") sent.add("TP2");
+
+  let bpExpiryDay = null;
+  if (bp === "active") bpExpiryDay = day + L.tp3; // so "days before expiry" can hit today if aligned
+
+  return {
+    day,
+    purchases: purchases >= 3 ? 3 : purchases,
+    tier,
+    redeemed,
+    bpActive: bp === "active",
+    bpCompleted: bp === "done",
+    firstPurchaseDay,
+    lastPurchaseDay: lastPurchaseDay != null ? Math.max(0, lastPurchaseDay) : null,
+    tierDay: tierDay != null ? Math.max(0, tierDay) : null,
+    tp4Day: sent.has("TP4") && tierDay != null ? tierDay + 1 : null,
+    bpExpiryDay,
+    sent,
+  };
+}
+
+function renderIftttBoard(hitIds) {
+  const L = readLevers();
+  const rows = ruleDimensionRows(L);
+  const hits = hitIds || [];
+  $("iftttBody").innerHTML = rows.map((r) => {
+    const hit = hits.includes(r.id) && r.on;
+    const off = !r.on ? ' style="opacity:0.45"' : "";
+    return `<tr class="${hit ? "hit" : ""}"${off}>
+      <td><span class="msg-name">${r.name}</span></td>
+      <td><span class="chip">${r.purchases}</span></td>
+      <td><span class="chip">${r.tier}</span></td>
+      <td><span class="chip">${r.redeemed}</span></td>
+      <td>${r.time}</td>
+      <td>${r.also}</td>
+      <td>${r.channel}</td>
+      <td>${r.priority}</td>
+    </tr>`;
+  }).join("");
+}
+
+function runRulesTest() {
+  const L = readLevers();
+  const state = buildTesterState();
+  // Fix bp expiry so TP3 can match when user sets "active" and day aligns:
+  // If active, set expiry so today = expiry - tp3
+  if (state.bpActive) {
+    state.bpExpiryDay = state.day + L.tp3;
+  }
+  const rules = compileRules(L);
+  const matched = rules.filter((r) => r.match(state)).sort((a, b) => a.priority - b.priority);
+  const winner = matched[0] || null;
+  renderIftttBoard(matched.map((r) => r.id));
+
+  const list = $("rulesMatchList");
+  if (!matched.length) {
+    $("rulesMatchBadge").textContent = "no match";
+    list.innerHTML = '<div class="empty">No rule matches this state — wait, or change a dimension.</div>';
+    return;
+  }
+  $("rulesMatchBadge").textContent = winner.name;
+  list.innerHTML = matched.map((r, i) => `
+    <div class="fire ${i === 0 ? "winner" : "suppressed"}">
+      <div class="fire-top">
+        <strong>${r.name}</strong>
+        <span class="pill ${i === 0 ? "warn" : ""}">${i === 0 ? "would send" : "held (priority)"}</span>
+        <span class="pill">p${r.priority}</span>
+      </div>
+      <p><strong>IF</strong> ${r.when}<br/><strong>THEN</strong> ${r.then}</p>
+    </div>
+  `).join("");
+}
+
+const RULE_PRESETS = [
+  { purchases: "1", tier: "no", redeemed: "no", day: 1, tierDay: 0, lastPurch: 1, bp: "off", sentTp1: "no", label: "Day after first visit" },
+  { purchases: "1", tier: "no", redeemed: "no", day: 4, tierDay: 0, lastPurch: 4, bp: "off", sentTp1: "yes", label: "Still one visit · day 4" },
+  { purchases: "1", tier: "no", redeemed: "no", day: 12, tierDay: 0, lastPurch: 12, bp: "active", sentTp1: "yes", label: "Bonus offer running" },
+  { purchases: "2", tier: "yes", redeemed: "no", day: 8, tierDay: 1, lastPurch: 2, bp: "done", sentTp1: "yes", label: "Just hit tier" },
+  { purchases: "2", tier: "yes", redeemed: "no", day: 20, tierDay: 10, lastPurch: 10, bp: "done", sentTp1: "yes", label: "Tiered · not redeemed" },
+  { purchases: "1", tier: "no", redeemed: "no", day: 35, tierDay: 0, lastPurch: 35, bp: "off", sentTp1: "yes", label: "Gone quiet" },
+];
+let rulePresetIdx = 0;
+
+function applyRulePreset(p) {
+  $("rt_purchases").value = p.purchases;
+  $("rt_tier").value = p.tier;
+  $("rt_redeemed").value = p.redeemed;
+  $("rt_day").value = p.day;
+  $("rt_tierDay").value = p.tierDay;
+  $("rt_lastPurch").value = p.lastPurch;
+  $("rt_bp").value = p.bp;
+  $("rt_sentTp1").value = p.sentTp1;
+  runRulesTest();
+  toast(p.label);
+}
+
 /* ========== SIM ========== */
 const ARCHETYPES = [
   { id: "cold", weight: 0.5, p2: 0.12, tier: 0.35, redeem: 0.32, tp2Lift: 0.14, tp5Lift: 0.12 },
@@ -2050,6 +2460,9 @@ function goTab(name) {
   $("view-" + name).classList.add("on");
   if (name === "export") renderExport();
   if (name === "runtime") $("lockedPill").textContent = "using saved program";
+  if (name === "rules") {
+    renderIftttBoard();
+  }
 }
 
 function renderExport() {
@@ -2671,9 +3084,33 @@ $("btnClearChannels").onclick = () => {
   renderChannelsUI();
 };
 
+$("btnRulesRefresh").onclick = () => {
+  renderIftttBoard();
+  toast("Rules refreshed from Design timings.");
+};
+$("btnRulesLock").onclick = () => {
+  lockProgram(readLevers(), "rules");
+  renderIftttBoard();
+};
+$("btnRulesToExport").onclick = () => {
+  renderIftttBoard();
+  goTab("export");
+};
+$("btnRulesTest").onclick = () => runRulesTest();
+$("btnRulesPresets").onclick = () => {
+  const p = RULE_PRESETS[rulePresetIdx % RULE_PRESETS.length];
+  rulePresetIdx++;
+  applyRulePreset(p);
+};
+["rt_purchases","rt_tier","rt_redeemed","rt_day","rt_tierDay","rt_lastPurch","rt_bp","rt_sentTp1"].forEach((id) => {
+  const el = $(id);
+  if (el) el.addEventListener("change", () => runRulesTest());
+});
+
 // boot
 syncOutputs();
 renderChannelsUI();
+renderIftttBoard();
 renderExport();
 evaluateRuntime(false);
 </script>
