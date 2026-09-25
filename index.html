@@ -768,6 +768,44 @@
     .advanced { display: none; margin-top: 12px; }
     .advanced.on { display: block; }
 
+    .chan-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    .chan-table th {
+      text-align: left;
+      font-size: 0.65rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--faint);
+      padding: 0 8px 8px 0;
+      border-bottom: 1px solid var(--line);
+      font-weight: 700;
+    }
+    .chan-table td {
+      padding: 8px 8px 8px 0;
+      border-bottom: 1px solid var(--line-soft);
+      vertical-align: middle;
+    }
+    .chan-table input[type="text"],
+    .chan-table input[type="number"] {
+      min-height: 36px;
+      padding: 6px 8px;
+      font-size: 0.82rem;
+    }
+    .chan-table .name-inp { min-width: 100px; }
+    .chan-table .num-inp { width: 72px; }
+    .msg-chan-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 14px;
+      margin-top: 12px;
+    }
+    @media (max-width: 640px) {
+      .msg-chan-grid { grid-template-columns: 1fr; }
+    }
+
     .empty {
       text-align: center;
       color: var(--faint);
@@ -1001,9 +1039,8 @@
               Model mix: <code>50%</code> one-and-done ·
               <code>30%</code> occasional returners ·
               <code>20%</code> loyalty-chasers.
-              Without a nudge, about <code>18%</code> come back for a 2nd visit;
-              a well-timed bonus offer can add roughly <code>+12pp</code>.
-              Estimates only — useful for comparing options, not forecasting a P&amp;L.
+              Without engagement rates, this is only a timing sketch — set Channels &amp; engagement below
+              (or hit Load QSR defaults) so opens, taps, and actions drive the test.
             </p>
 
             <div class="btn-row">
@@ -1022,6 +1059,38 @@
 
       <section class="panel" style="margin-top: 16px;">
         <div class="panel-h">
+          <h2>Channels &amp; engagement</h2>
+          <span class="pill warn">makes the test real</span>
+        </div>
+        <div class="panel-b">
+          <p style="color:var(--muted);font-size:0.88rem;max-width:64ch;margin-bottom:12px">
+            Sends alone aren’t a test — people have to <strong>open / view</strong>,
+            <strong>click / tap</strong>, then <strong>act</strong> (come back or redeem).
+            Add the channels you use, set rates, and map each message to a channel.
+          </p>
+          <div class="btn-row" style="margin-bottom:14px">
+            <button type="button" class="btn btn-primary" id="btnQsrChannels">Load QSR defaults</button>
+            <button type="button" class="btn btn-honey" id="btnAddChannel">Add channel</button>
+            <button type="button" class="btn" id="btnAddMetric">Add metric</button>
+            <button type="button" class="btn btn-ghost" id="btnClearChannels">Clear all</button>
+          </div>
+          <div class="table-scroll">
+            <table class="chan-table" id="chanTable">
+              <thead id="chanHead"></thead>
+              <tbody id="chanBody"></tbody>
+            </table>
+          </div>
+          <h3 style="font-family:var(--display);font-size:1.05rem;color:var(--honey);margin:18px 0 8px">Which channel for each message?</h3>
+          <div class="msg-chan-grid" id="msgChanGrid"></div>
+          <div class="callout">
+            <strong>How rates work:</strong> Open % of sends → Click % of opens → Action % of clicks
+            (return visit or reward use, depending on the message). Fatigue lowers later opens.
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" style="margin-top: 16px;">
+        <div class="panel-h">
           <h2>Results</h2>
           <span class="pill" id="simStatus">not run yet — press Run test</span>
         </div>
@@ -1032,9 +1101,9 @@
             <div class="stat moss"><div class="k">Used a reward</div><div class="v">—</div><div class="s">1st redemption</div></div>
             <div class="stat"><div class="k">Habit (3+ visits)</div><div class="v">—</div><div class="s">repeat buyers</div></div>
             <div class="stat"><div class="k">Messages / person</div><div class="v">—</div><div class="s">avg sends</div></div>
-            <div class="stat blush"><div class="k">Inbox load</div><div class="v">—</div><div class="s">relative cost index</div></div>
-            <div class="stat moss"><div class="k">Action per message</div><div class="v">—</div><div class="s">redeem % ÷ sends</div></div>
-            <div class="stat"><div class="k">Days to return</div><div class="v">—</div><div class="s">median among returners</div></div>
+            <div class="stat blush"><div class="k">Open rate</div><div class="v">—</div><div class="s">of sends</div></div>
+            <div class="stat moss"><div class="k">Click rate</div><div class="v">—</div><div class="s">of opens</div></div>
+            <div class="stat"><div class="k">Act rate</div><div class="v">—</div><div class="s">of clicks → visit/redeem</div></div>
           </div>
         </div>
       </section>
@@ -1069,8 +1138,8 @@
             <button type="button" class="btn btn-ghost" id="btnRecFromDesign">Use current Design timings as baseline</button>
           </div>
           <div class="callout">
-            <strong>How to read this:</strong> “Most likely to open” prefers fewer, better-timed messages.
-            “Most likely to act” prefers setups that move visits and redemptions — even if the inbox is busier.
+            <strong>How to read this:</strong> “Most likely to open” uses your channel open rates (and fatigue).
+            “Most likely to act” uses click → action rates from Channels &amp; engagement.
           </div>
         </div>
       </section>
@@ -1274,6 +1343,115 @@ const MSG = {
   TP6: { name: "Come-back nudge", path: "Follow-up" },
 };
 
+/* ========== CHANNELS & METRICS ========== */
+const QSR_METRICS = [
+  { key: "open", label: "Open / view %", of: "sends" },
+  { key: "click", label: "Click / tap %", of: "opens" },
+  { key: "act", label: "Action %", of: "clicks" },
+];
+
+const QSR_CHANNELS = [
+  { id: "push", name: "Push", rates: { open: 42, click: 9, act: 14 } },
+  { id: "email", name: "Email", rates: { open: 22, click: 3.5, act: 28 } },
+  { id: "inapp", name: "In-app", rates: { open: 55, click: 12, act: 18 } },
+  { id: "sms", name: "SMS", rates: { open: 78, click: 11, act: 16 } },
+];
+
+const QSR_MSG_CHANNELS = {
+  TP1: "push",
+  TP2: "push",
+  TP3: "push",
+  TP4: "email",
+  TP5: "push",
+  TP6: "email",
+};
+
+let engagement = {
+  metrics: QSR_METRICS.map((m) => ({ ...m })),
+  channels: QSR_CHANNELS.map((c) => ({ ...c, rates: { ...c.rates } })),
+  msgChannel: { ...QSR_MSG_CHANNELS },
+};
+
+function uid(prefix) {
+  return prefix + "_" + Math.random().toString(36).slice(2, 7);
+}
+
+function renderChannelsUI() {
+  const head = $("chanHead");
+  const body = $("chanBody");
+  if (!head || !body) return;
+
+  head.innerHTML = `<tr>
+    <th>Channel</th>
+    ${engagement.metrics.map((m) => `<th title="Of ${m.of}">${m.label}</th>`).join("")}
+    <th></th>
+  </tr>`;
+
+  body.innerHTML = engagement.channels.map((ch, i) => `
+    <tr data-i="${i}">
+      <td><input class="name-inp" type="text" value="${ch.name.replace(/"/g, "&quot;")}" data-field="name" /></td>
+      ${engagement.metrics.map((m) => `
+        <td><input class="num-inp" type="number" min="0" max="100" step="0.5"
+          value="${ch.rates[m.key] != null ? ch.rates[m.key] : 0}" data-rate="${m.key}" /></td>
+      `).join("")}
+      <td><button type="button" class="btn btn-ghost btn-del-chan" data-i="${i}" style="min-height:32px;padding:4px 10px">Remove</button></td>
+    </tr>
+  `).join("") || `<tr><td colspan="${2 + engagement.metrics.length}" style="color:var(--faint)">No channels yet — Load QSR defaults or Add channel.</td></tr>`;
+
+  body.querySelectorAll("input").forEach((inp) => {
+    inp.addEventListener("change", () => {
+      const i = +inp.closest("tr").dataset.i;
+      const ch = engagement.channels[i];
+      if (!ch) return;
+      if (inp.dataset.field === "name") ch.name = inp.value.trim() || ch.name;
+      if (inp.dataset.rate) ch.rates[inp.dataset.rate] = Math.max(0, Math.min(100, +inp.value || 0));
+    });
+  });
+  body.querySelectorAll(".btn-del-chan").forEach((btn) => {
+    btn.onclick = () => {
+      engagement.channels.splice(+btn.dataset.i, 1);
+      renderChannelsUI();
+    };
+  });
+
+  const grid = $("msgChanGrid");
+  const opts = engagement.channels.map((c) =>
+    `<option value="${c.id}">${c.name}</option>`
+  ).join("") || `<option value="">—</option>`;
+  grid.innerHTML = Object.keys(MSG).map((id) => {
+    const sel = engagement.msgChannel[id] || (engagement.channels[0] && engagement.channels[0].id) || "";
+    return `<label class="field" style="margin:0">
+      <span class="l">${MSG[id].name}</span>
+      <select data-msgid="${id}">${engagement.channels.map((c) =>
+        `<option value="${c.id}" ${c.id === sel ? "selected" : ""}>${c.name}</option>`
+      ).join("")}</select>
+    </label>`;
+  }).join("");
+  grid.querySelectorAll("select").forEach((sel) => {
+    sel.onchange = () => { engagement.msgChannel[sel.dataset.msgid] = sel.value; };
+  });
+}
+
+function loadQsrChannelDefaults() {
+  engagement = {
+    metrics: QSR_METRICS.map((m) => ({ ...m })),
+    channels: QSR_CHANNELS.map((c) => ({ ...c, rates: { ...c.rates } })),
+    msgChannel: { ...QSR_MSG_CHANNELS },
+  };
+  renderChannelsUI();
+  toast("QSR channel defaults loaded (push, email, in-app, SMS).");
+}
+
+function getChannelForMsg(msgId) {
+  const id = engagement.msgChannel[msgId];
+  return engagement.channels.find((c) => c.id === id) || engagement.channels[0] || null;
+}
+
+function rateOf(ch, key) {
+  if (!ch || ch.rates[key] == null) return 0;
+  return ch.rates[key] / 100;
+}
+
 function readLevers() {
   return {
     tp1: +$("lev_tp1").value,
@@ -1433,6 +1611,7 @@ function simulate(L) {
   const bpDays = L.bpExpiry;
 
   let second = 0, tierN = 0, redeemN = 0, retain = 0, comms = 0;
+  let opens = 0, clicks = 0, acts = 0;
   const daysToSecond = [];
 
   for (let i = 0; i < L.n; i++) {
@@ -1452,6 +1631,8 @@ function simulate(L) {
       sent: new Set(),
       arch,
       fatigue: 0,
+      returnBoost: 0,
+      redeemBoost: 0,
     };
 
     for (let d = 0; d <= L.horizon; d++) {
@@ -1461,7 +1642,6 @@ function simulate(L) {
         m.bpActive = false;
       }
 
-      // Evaluate & send (one per day, priority)
       const matched = rules.filter((r) => r.match(m));
       if (matched.length) {
         const w = matched[0];
@@ -1473,34 +1653,52 @@ function simulate(L) {
           m.bpExpiryDay = d + bpDays;
         }
         if (w.id === "TP4") m.tp4Day = d;
+
+        // Engagement funnel: send → open → click → act
+        const ch = getChannelForMsg(w.id);
+        const fat = Math.max(0.35, 1 - m.fatigue * 0.035);
+        if (ch && rnd() < rateOf(ch, "open") * fat) {
+          opens++;
+          if (rnd() < rateOf(ch, "click")) {
+            clicks++;
+            if (rnd() < rateOf(ch, "act")) {
+              acts++;
+              if (w.id === "TP2" || w.id === "TP3" || w.id === "TP6" || w.id === "TP1") {
+                m.returnBoost = Math.max(m.returnBoost, 0.55);
+              }
+              if (w.id === "TP4" || w.id === "TP5") {
+                m.redeemBoost = Math.max(m.redeemBoost, 0.65);
+              }
+            }
+          }
+        }
       }
 
-      // Stochastic behaviours
-      const fat = Math.max(0, 1 - m.fatigue * 0.02);
+      const fat = Math.max(0, 1 - m.fatigue * 0.015);
 
-      // 2nd / 3rd purchase attempts
       if (m.purchases === 1 && d > 0) {
-        let p = arch.p2;
-        if (m.sent.has("TP2") && d <= (m.firstPurchaseDay + L.tp2b + 3)) p += arch.tp2Lift;
-        if (m.sent.has("TP6")) p += 0.06;
+        let p = arch.p2 * 0.35;
+        p += m.returnBoost;
+        m.returnBoost *= 0.85;
         p *= fat;
-        if (rnd() < p / L.horizon) {
+        if (rnd() < Math.min(0.55, p) / Math.max(8, L.horizon * 0.35)) {
           m.purchases = 2;
           m.lastPurchaseDay = d;
           if (m.bpActive) { m.bpCompleted = true; m.bpActive = false; }
           daysToSecond.push(d);
+          m.returnBoost = 0;
         }
       } else if (m.purchases === 2) {
-        let p = arch.p2 * 0.7;
-        if (m.sent.has("TP6")) p += 0.08;
+        let p = arch.p2 * 0.25 + m.returnBoost * 0.7;
+        m.returnBoost *= 0.85;
         p *= fat;
-        if (rnd() < p / L.horizon) {
+        if (rnd() < Math.min(0.45, p) / Math.max(8, L.horizon * 0.4)) {
           m.purchases = 3;
           m.lastPurchaseDay = d;
+          m.returnBoost = 0;
         }
       }
 
-      // Tier can land across early visits
       if (!m.tier && m.purchases >= 1) {
         let p = arch.tier * (m.purchases / 3);
         if (m.bpCompleted) p += 0.08;
@@ -1510,14 +1708,13 @@ function simulate(L) {
         }
       }
 
-      // Redeem
       if (m.tier && !m.redeemed) {
-        let p = arch.redeem;
-        if (m.sent.has("TP4")) p += 0.08;
-        if (m.sent.has("TP5")) p += arch.tp5Lift;
+        let p = arch.redeem * 0.25 + m.redeemBoost;
+        m.redeemBoost *= 0.88;
         p *= fat;
-        if (rnd() < p / (L.horizon * 0.7)) {
+        if (rnd() < Math.min(0.6, p) / Math.max(6, L.horizon * 0.3)) {
           m.redeemed = true;
+          m.redeemBoost = 0;
         }
       }
     }
@@ -1535,8 +1732,11 @@ function simulate(L) {
 
   const pct = (x) => (100 * x) / L.n;
   const avgComms = comms / L.n;
+  const openRate = comms > 0 ? (100 * opens) / comms : 0;
+  const clickRate = opens > 0 ? (100 * clicks) / opens : 0;
+  const actRate = clicks > 0 ? (100 * acts) / clicks : 0;
   const cost = avgComms * 1.0 + (L.bp ? 0.4 : 0) + (L.recovery ? 0.3 : 0);
-  const efficiency = avgComms > 0 ? pct(redeemN) / avgComms : 0;
+  const efficiency = avgComms > 0 ? pct(redeemN + second) / (2 * avgComms) : 0;
 
   return {
     levers: { ...L },
@@ -1549,6 +1749,9 @@ function simulate(L) {
       avgComms,
       cost,
       efficiency,
+      openRate,
+      clickRate,
+      actRate,
       medianSecond: median,
       n: L.n,
       horizon: L.horizon,
@@ -1558,18 +1761,18 @@ function simulate(L) {
 
 /* ========== RECOMMENDATIONS ENGINE ========== */
 function scoreMetrics(m, goal) {
-  // "open" ≈ lighter inbox + still some action (fatigue proxy)
-  const openProxy = (m.second * 0.25 + m.redeem * 0.25) - m.avgComms * 6 + (m.cost < 1.2 ? 8 : 0);
   switch (goal) {
-    case "open": return openProxy;
-    case "action": return 0.55 * m.second + 0.45 * m.redeem;
+    case "open":
+      return m.openRate * 1.2 + m.second * 0.15 + m.redeem * 0.1 - m.avgComms * 3;
+    case "action":
+      return 0.4 * m.second + 0.35 * m.redeem + 0.25 * m.actRate;
     case "return": return m.second;
     case "redeem": return m.redeem;
-    case "efficiency": return m.efficiency;
+    case "efficiency": return m.efficiency + m.actRate * 0.05;
     case "retain": return m.retain;
     case "balanced":
     default:
-      return 0.35 * m.second + 0.35 * m.redeem + 0.15 * m.retain - 2.2 * m.cost;
+      return 0.3 * m.second + 0.25 * m.redeem + 0.2 * m.openRate * 0.2 + 0.15 * m.actRate - 1.5 * m.cost;
   }
 }
 
@@ -1699,7 +1902,8 @@ function renderRecommendations(list, goal) {
       <div class="rec-meta">
         <span><strong>${fmtPct(r.metrics.second)}</strong> return</span>
         <span><strong>${fmtPct(r.metrics.redeem)}</strong> reward use</span>
-        <span><strong>${fmtPct(r.metrics.retain)}</strong> habit</span>
+        <span><strong>${fmtPct(r.metrics.openRate || 0)}</strong> open</span>
+        <span><strong>${fmtPct(r.metrics.actRate || 0)}</strong> act</span>
         <span><strong>${fmtNum(r.metrics.avgComms)}</strong> msgs/person</span>
         <span><strong>${fmtNum(r.score)}</strong> ${goalLabel}</span>
         <span>Bonus days ${r.fullLevers.tp2a}/${r.fullLevers.tp2b} · reward nudge +${r.fullLevers.tp5}d · come-back +${r.fullLevers.tp6}d · bonus ${r.fullLevers.bp ? "on" : "off"} · follow-ups ${r.fullLevers.recovery ? "on" : "off"}</span>
@@ -1787,7 +1991,6 @@ function fmtPct(x) { return x.toFixed(1) + "%"; }
 function fmtNum(x) { return x.toFixed(2); }
 
 function renderOutcomes(metrics, elPrefix) {
-  // design tab uses outcomeStats children
   const root = $("outcomeStats");
   const vals = [
     fmtPct(metrics.second),
@@ -1795,9 +1998,9 @@ function renderOutcomes(metrics, elPrefix) {
     fmtPct(metrics.redeem),
     fmtPct(metrics.retain),
     fmtNum(metrics.avgComms),
-    fmtNum(metrics.cost),
-    fmtNum(metrics.efficiency),
-    metrics.medianSecond == null ? "—" : String(metrics.medianSecond),
+    fmtPct(metrics.openRate || 0),
+    fmtPct(metrics.clickRate || 0),
+    fmtPct(metrics.actRate || 0),
   ];
   [...root.querySelectorAll(".stat .v")].forEach((el, i) => { el.textContent = vals[i]; });
 }
@@ -1810,11 +2013,11 @@ function metricsBlock(m, L) {
     </p>
     <div class="stats" style="grid-template-columns:1fr 1fr">
       <div class="stat"><div class="k">Return visit</div><div class="v">${fmtPct(m.second)}</div></div>
-      <div class="stat blush"><div class="k">Tier</div><div class="v">${fmtPct(m.tier)}</div></div>
       <div class="stat moss"><div class="k">Reward use</div><div class="v">${fmtPct(m.redeem)}</div></div>
+      <div class="stat blush"><div class="k">Open rate</div><div class="v">${fmtPct(m.openRate || 0)}</div></div>
+      <div class="stat"><div class="k">Act rate</div><div class="v">${fmtPct(m.actRate || 0)}</div></div>
       <div class="stat"><div class="k">Msgs / person</div><div class="v">${fmtNum(m.avgComms)}</div></div>
-      <div class="stat"><div class="k">Inbox load</div><div class="v">${fmtNum(m.cost)}</div></div>
-      <div class="stat moss"><div class="k">Action / msg</div><div class="v">${fmtNum(m.efficiency)}</div></div>
+      <div class="stat moss"><div class="k">Click rate</div><div class="v">${fmtPct(m.clickRate || 0)}</div></div>
     </div>`;
 }
 
@@ -1868,8 +2071,14 @@ function renderExport() {
     timings: lockedLevers,
     messages: lockedRules.map(({ match, enabled, id, ...rest }) => ({
       code: id,
+      channel: (getChannelForMsg(id) || {}).name || null,
       ...rest,
     })),
+    engagement: {
+      metrics: engagement.metrics,
+      channels: engagement.channels,
+      messageChannels: engagement.msgChannel,
+    },
   };
   $("exportJson").value = JSON.stringify(payload, null, 2);
 }
@@ -2012,11 +2221,26 @@ function runStory(persona, levers, days) {
         state.bpExpiryDay = d + levers.bpExpiry;
       }
       if (winner.id === "TP4") state.tp4Day = d;
+      const ch = getChannelForMsg(winner.id);
+      const chName = ch ? ch.name : "Message";
+      // Deterministic-ish engagement for story (seeded by day+id length)
+      const openP = ch ? rateOf(ch, "open") : 0.3;
+      const opened = (Math.sin((d + 1) * 12.9898 + winner.id.length) * 43758.5453) % 1 > 1 - openP
+        || ((d * 17 + winner.id.charCodeAt(2)) % 100) / 100 < openP;
+      const clickP = ch ? rateOf(ch, "click") : 0.1;
+      const clicked = opened && ((d * 31 + winner.id.charCodeAt(1)) % 100) / 100 < clickP;
+      const actP = ch ? rateOf(ch, "act") : 0.1;
+      const acted = clicked && ((d * 47 + winner.id.charCodeAt(0)) % 100) / 100 < actP;
+      let detail = `via ${chName}. ${winner.then}`;
+      if (opened && clicked && acted) detail = `via ${chName} · opened · tapped · acted. ${winner.then}`;
+      else if (opened && clicked) detail = `via ${chName} · opened · tapped · no action. ${winner.then}`;
+      else if (opened) detail = `via ${chName} · opened · no tap. ${winner.then}`;
+      else detail = `via ${chName} · not opened. ${winner.then}`;
       timeline.push({
         kind: "msg",
         when: humanWhen(d, state.firstPurchaseDay),
         what: `Message: ${winner.name}`,
-        detail: winner.then,
+        detail,
       });
     }
   }
@@ -2422,8 +2646,34 @@ $("btnCopy").onclick = async () => {
   }
 };
 
+$("btnQsrChannels").onclick = () => loadQsrChannelDefaults();
+$("btnAddChannel").onclick = () => {
+  const rates = {};
+  engagement.metrics.forEach((m) => { rates[m.key] = 0; });
+  engagement.channels.push({ id: uid("ch"), name: "New channel", rates });
+  renderChannelsUI();
+};
+$("btnAddMetric").onclick = () => {
+  const label = prompt("Metric name (e.g. Unsubscribe %)", "Unsubscribe %");
+  if (!label) return;
+  const key = label.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "") || uid("m");
+  if (engagement.metrics.some((m) => m.key === key)) {
+    toast("That metric already exists.");
+    return;
+  }
+  engagement.metrics.push({ key, label, of: "custom" });
+  engagement.channels.forEach((ch) => { if (ch.rates[key] == null) ch.rates[key] = 0; });
+  renderChannelsUI();
+  toast("Metric added — fill in rates per channel.");
+};
+$("btnClearChannels").onclick = () => {
+  engagement.channels = [];
+  renderChannelsUI();
+};
+
 // boot
 syncOutputs();
+renderChannelsUI();
 renderExport();
 evaluateRuntime(false);
 </script>
